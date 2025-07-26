@@ -1,0 +1,108 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 100 100% 99%;
+    --foreground: 132 28% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 132 28% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 132 28% 14%;
+
+    --primary: 130 48% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 42 58% 48%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 100 20% 95%;
+    --muted-foreground: 132 10% 40%;
+
+    --accent: 42 58% 80%;
+    --accent-foreground: 132 28% 14%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 130 20% 90%;
+    --input: 130 20% 90%;
+    --ring: 130 48% 42%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01";
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: theme('colors.muted.DEFAULT');
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.primary.DEFAULT');
+    border-radius: 5px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.primary.DEFAULT/0.8');
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
+  }
+  
+  .section-title {
+    @apply font-serif text-4xl sm:text-5xl font-bold text-organic-800 mb-6;
+  }
+  
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 lg:py-20;
+  }
+  
+  .btn-primary {
+    @apply px-6 py-3 bg-organic-500 text-white rounded-md font-medium 
+    transition-all duration-300 hover:bg-organic-600 focus:outline-none 
+    focus:ring-2 focus:ring-organic-500 focus:ring-offset-2 shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-earth-400 text-white rounded-md font-medium 
+    transition-all duration-300 hover:bg-earth-500 focus:outline-none 
+    focus:ring-2 focus:ring-earth-400 focus:ring-offset-2 shadow-md;
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-[1.02];
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-3 rounded-md border border-organic-200 focus:border-organic-500 
+    focus:ring-2 focus:ring-organic-200 outline-none transition duration-200;
+  }
+  
+  .page-transition {
+    @apply animate-fade-in;
+  }
+}

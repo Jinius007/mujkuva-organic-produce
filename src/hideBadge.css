@@ -1,0 +1,5 @@
+
+/* Hide the Lovable badge */
+#lovable-badge {
+  display: none !important;
+}
