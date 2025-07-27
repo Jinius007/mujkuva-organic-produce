@@ -33,12 +33,33 @@ const Cart = () => {
     setIsSubmitting(true);
     
     try {
+      console.log('Starting to save orders to database...', { items: state.items, customerDetails });
+      
+      // Check for existing reserved orders for this customer
+      const { data: existingReservations, error: checkError } = await supabase
+        .from('order_slots')
+        .select('id')
+        .eq('customer_name', customerDetails.name)
+        .eq('customer_phone', customerDetails.phone)
+        .eq('status', 'reserved')
+        .gte('created_at', new Date(Date.now() - 30 * 60 * 1000).toISOString()); // Last 30 minutes
+
+      if (checkError) {
+        console.error('Error checking existing reservations:', checkError);
+        throw new Error('Failed to check existing orders');
+      }
+
+      if (existingReservations && existingReservations.length > 0) {
+        toast.error('You already have a pending order. Please complete your payment first.');
+        return;
+      }
+      
       // Save each item as a separate order in the database
+      const orderDate = new Date().toISOString().slice(0, 10); // Today's date
       const orderPromises = state.items.map(item => {
-        const orderDate = '2025-07-26'; // Fixed date for the batch
-        const weightKg = item.id === 'dudhi' ? item.quantity * 0.5 : item.quantity * 0.5; // Approx weight
+        const weightKg = item.quantity * 0.5; // 0.5kg per unit
         
-        return supabase.from('order_slots').insert({
+        const orderData = {
           product_id: item.id,
           product_name: item.name,
           customer_name: customerDetails.name,
@@ -48,24 +69,31 @@ const Cart = () => {
           weight_kg: weightKg,
           total_price: item.price * item.quantity,
           order_date: orderDate,
-          status: 'pending'
-        });
+          status: 'reserved', // Reserve slots when user proceeds to payment
+          transaction_id: null, // Will be updated after payment
+          payment_screenshot_path: null // Will be updated after payment
+        };
+        
+        console.log('Inserting order:', orderData);
+        return supabase.from('order_slots').insert(orderData);
       });
 
       const results = await Promise.all(orderPromises);
       
-      // Check if any inserts failed
-      const hasErrors = results.some(result => result.error);
-      if (hasErrors) {
-        throw new Error("Failed to save some orders");
+      // Check for errors in any of the insert operations
+      const errors = results.filter(result => result.error);
+      if (errors.length > 0) {
+        console.error('Database insert errors:', errors);
+        throw new Error(`Failed to save ${errors.length} orders. Please try again.`);
       }
+
+      console.log('All orders saved successfully:', results);
 
       // Store checkout data for payment page
       const checkoutData = {
         items: state.items,
         total: state.total,
-        customerDetails,
-        orderIds: [] // Simplified for now
+        customerDetails
       };
       
       sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));

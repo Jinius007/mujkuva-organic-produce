@@ -36,11 +36,20 @@ const Checkout = () => {
   useEffect(() => {
     // Get checkout data from sessionStorage
     const storedData = sessionStorage.getItem('checkoutData');
+    console.log('Stored checkout data:', storedData);
+    
     if (storedData) {
-      const data = JSON.parse(storedData);
-      // Remove restriction: allow all products
-      setCheckoutData(data);
+      try {
+        const data = JSON.parse(storedData);
+        console.log('Parsed checkout data:', data);
+        setCheckoutData(data);
+      } catch (error) {
+        console.error('Error parsing checkout data:', error);
+        navigate('/cart');
+        toast.error('Invalid checkout data found.');
+      }
     } else {
+      console.log('No checkout data found in sessionStorage');
       navigate('/cart');
       toast.error('No checkout data found.');
     }
@@ -76,54 +85,69 @@ const Checkout = () => {
     setIsUploading(true);
 
     try {
+      console.log('Starting order submission...', { checkoutData, transactionId });
+      
       // Upload file to Supabase Storage
       const fileExt = selectedFile.name.split('.').pop();
       const fileName = `${uuidv4()}.${fileExt}`;
       
+      console.log('Uploading file to storage:', fileName);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('payment_screenshots')
         .upload(fileName, selectedFile);
 
       if (uploadError) {
+        console.error('File upload error:', uploadError);
         throw uploadError;
       }
 
-      // Insert each item as a separate order in the database
-      const orderDate = new Date().toISOString().slice(0, 10); // Today's date
-      const orderPromises = checkoutData.items.map(item => {
-        const weightKg = item.quantity * 0.5; // 0.5kg per unit
-        return supabase.from('order_slots').insert({
-          product_id: item.id,
-          product_name: item.name,
-          customer_name: checkoutData.customerDetails.name,
-          customer_phone: checkoutData.customerDetails.phone,
-          customer_address: checkoutData.customerDetails.address,
-          quantity: item.quantity,
-          weight_kg: weightKg,
-          total_price: item.price * item.quantity,
-          order_date: orderDate,
-          status: 'pending',
+      console.log('File uploaded successfully:', uploadData);
+
+      // Update existing orders with payment information
+      console.log('Updating orders with payment information...');
+      
+      const updatePromises = checkoutData.items.map(item => {
+        const updateData = {
           transaction_id: transactionId,
-          payment_screenshot_path: uploadData?.path || null
-        });
+          payment_screenshot_path: uploadData?.path || null,
+          status: 'confirmed' // Update status to confirmed after payment
+        };
+        
+        console.log('Updating order for item:', item.name, updateData);
+        return supabase
+          .from('order_slots')
+          .update(updateData)
+          .eq('product_id', item.id)
+          .eq('customer_name', checkoutData.customerDetails.name)
+          .eq('customer_phone', checkoutData.customerDetails.phone)
+          .eq('status', 'reserved') // Update reserved orders
+          .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()); // Orders from last 24 hours
       });
 
-      const results = await Promise.all(orderPromises);
-      const hasErrors = results.some(result => result.error);
-      if (hasErrors) {
-        throw new Error('Failed to save some orders');
+      const results = await Promise.all(updatePromises);
+      
+      // Check for errors in any of the update operations
+      const errors = results.filter(result => result.error);
+      if (errors.length > 0) {
+        console.error('Database update errors:', errors);
+        throw new Error(`Failed to update ${errors.length} orders. Please try again.`);
       }
+
+      // Log successful results for debugging
+      console.log('All orders updated successfully:', results);
 
       // Clear cart and checkout data
       clearCart();
       sessionStorage.removeItem('checkoutData');
       setIsOrderComplete(true);
       toast.success('Order placed successfully!');
+      
       // Navigate to order confirmation after 3 seconds
       setTimeout(() => {
+        const orderId = Date.now().toString(); // Use timestamp as fallback order ID
         navigate('/order-confirmation', { 
           state: { 
-            orderId: results[0]?.data?.[0]?.id || Date.now().toString(),
+            orderId: orderId,
             orderData: checkoutData 
           } 
         });
@@ -131,7 +155,19 @@ const Checkout = () => {
       
     } catch (error) {
       console.error('Error placing order:', error);
-      toast.error('Failed to place order. Please try again.');
+      
+      // Provide more specific error messages
+      if (error instanceof Error) {
+        if (error.message.includes('storage')) {
+          toast.error('Failed to upload payment screenshot. Please try again.');
+        } else if (error.message.includes('database') || error.message.includes('order')) {
+          toast.error('Failed to save order details. Please try again.');
+        } else {
+          toast.error(`Order failed: ${error.message}`);
+        }
+      } else {
+        toast.error('Failed to place order. Please try again.');
+      }
     } finally {
       setIsUploading(false);
     }

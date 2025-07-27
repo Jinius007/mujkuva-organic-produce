@@ -122,14 +122,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     stockUsed: {}
   });
 
-  // Fetch current stock usage from database
+  // Fetch current stock usage from database (both reserved and confirmed orders count against stock)
   const refreshStockData = async () => {
     try {
       const { data, error } = await supabase
         .from('order_slots')
-        .select('product_id, quantity')
+        .select('product_id, quantity, status')
         .gte('order_date', ORDER_DATE_START)
-        .lte('order_date', ORDER_DATE_END);
+        .lte('order_date', ORDER_DATE_END)
+        .in('status', ['reserved', 'confirmed']); // Count both reserved and confirmed orders against stock
 
       if (error) throw error;
 
@@ -151,7 +152,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // Refresh stock data on mount
   useEffect(() => {
     refreshStockData();
+    cleanupExpiredReservations();
   }, []);
+
+  // Clean up reserved orders that are older than 30 minutes (payment timeout)
+  const cleanupExpiredReservations = async () => {
+    try {
+      const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+      
+      const { error } = await supabase
+        .from('order_slots')
+        .delete()
+        .eq('status', 'reserved')
+        .lt('created_at', thirtyMinutesAgo);
+
+      if (error) {
+        console.error('Error cleaning up expired reservations:', error);
+      } else {
+        console.log('Cleaned up expired reservations');
+        // Refresh stock data after cleanup to update available quantities
+        await refreshStockData();
+      }
+    } catch (error) {
+      console.error('Error in cleanupExpiredReservations:', error);
+    }
+  };
 
   const addToCart = (item: Omit<CartItem, 'quantity'>, quantity: number): boolean => {
     const existingItem = state.items.find(cartItem => cartItem.id === item.id);

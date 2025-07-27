@@ -1,4 +1,5 @@
 
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,10 +18,17 @@ import Checkout from "./pages/Checkout";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import { testSupabaseConnection } from "./test-supabase-connection";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  // Test Supabase connection on app load
+  React.useEffect(() => {
+    testSupabaseConnection();
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <CartProvider>
@@ -47,6 +55,7 @@ const App = () => (
       </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
