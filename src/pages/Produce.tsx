@@ -171,13 +171,15 @@ const Produce = () => {
                     <p className="text-gray-600 mb-4 line-clamp-2">
                       {product.description}
                     </p>
-                    <Link 
-                      to={`/produce/${product.id}`}
-                      className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors"
+                    {/* Replace Link with disabled order button */}
+                    <button
+                      type="button"
+                      onClick={() => window.alert('Orders closed for this slot')}
+                      className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-red-100 text-red-800 font-semibold"
                     >
                       <span>Order Now</span>
                       <ArrowRight size={16} className="ml-2" />
-                    </Link>
+                    </button>
                   </div>
                 </motion.div>
               ))}
