@@ -144,6 +144,19 @@ const Checkout = () => {
             <div className="flex flex-col items-center justify-center mb-4">
               <QrCode size={80} className="text-organic-600 mb-2" />
               <img src="/lovable-uploads/kdcc-qr.png" alt="QR Code" className="w-48 h-48 object-contain border rounded-lg" />
+              <button
+                className="btn-primary mt-4"
+                style={{ width: 'fit-content' }}
+                onClick={() => {
+                  // UPI deep link for supported apps
+                  // Example: upi://pay?pa=yourupi@bank&pn=Name&am=amount&cu=INR
+                  const upiUrl = `upi://pay?pa=yespay.kdcska2410525@yesbankltd&pn=MAJKUVA%20ORGANIC%20KHEDUT&am=${effectiveCheckoutData.total}&cu=INR`;
+                  window.location.href = upiUrl;
+                }}
+              >
+                Pay via UPI App
+              </button>
+              <span className="text-xs text-gray-500 mt-2">Tap to pay directly using your UPI app</span>
             </div>
             <div className="flex flex-col items-center mb-4">
               <label className="font-semibold mb-2">Transaction ID</label>
