@@ -150,7 +150,8 @@ const Checkout = () => {
                 onClick={() => {
                   // Dynamic UPI deep link with all required params
                   const pa = 'yespay.kdcskai2410525@yesbankltd';
-                  const pn = encodeURIComponent('THE MAJKUVA ORGANIC KHEDUT');
+                  // Use pre-encoded payee name as required by UPI spec (with %20 for spaces)
+                  const pn = 'THE%20MAJKUVA%20ORGANIC%20KHEDUT';
                   const am = effectiveCheckoutData.total.toFixed(2);
                   const cu = 'INR';
                   const tn = encodeURIComponent(`Order for ${effectiveCheckoutData.customerDetails.name}`);
