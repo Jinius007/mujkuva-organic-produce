@@ -150,7 +150,7 @@ const Checkout = () => {
                 onClick={() => {
                   // UPI deep link for supported apps
                   // Example: upi://pay?pa=yourupi@bank&pn=Name&am=amount&cu=INR
-                  const upiUrl = `upi://pay?pa=yespay.kdcska2410525@yesbankltd&pn=MAJKUVA%20ORGANIC%20KHEDUT&am=${effectiveCheckoutData.total}&cu=INR`;
+                  const upiUrl = `upi://pay?pa=yespay.kdcskai2410525@yesbankltd&pn=MAJKUVA%20ORGANIC%20KHEDUT&am=${effectiveCheckoutData.total}&cu=INR`;
                   window.location.href = upiUrl;
                 }}
               >
