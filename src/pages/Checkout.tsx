@@ -33,27 +33,18 @@ const Checkout = () => {
   const [isOrderComplete, setIsOrderComplete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+
+  // Restore: Load checkoutData from sessionStorage on mount
   useEffect(() => {
-    // Get checkout data from sessionStorage
-    const storedData = sessionStorage.getItem('checkoutData');
-    console.log('Stored checkout data:', storedData);
-    
-    if (storedData) {
+    const stored = sessionStorage.getItem('checkoutData');
+    if (stored) {
       try {
-        const data = JSON.parse(storedData);
-        console.log('Parsed checkout data:', data);
-        setCheckoutData(data);
-      } catch (error) {
-        console.error('Error parsing checkout data:', error);
-        navigate('/cart');
-        toast.error('Invalid checkout data found.');
+        setCheckoutData(JSON.parse(stored));
+      } catch (e) {
+        setCheckoutData(null);
       }
-    } else {
-      console.log('No checkout data found in sessionStorage');
-      navigate('/cart');
-      toast.error('No checkout data found.');
     }
-  }, [navigate]);
+  }, []);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -72,142 +63,146 @@ const Checkout = () => {
   };
 
   const handleOrderSubmit = async () => {
-    if (!checkoutData || !transactionId.trim()) {
+    // Use effectiveCheckoutData for local/dev or real checkoutData for prod
+    const dataToUse = checkoutData && checkoutData.items && checkoutData.items.length > 0 ? checkoutData : null;
+    if (!dataToUse) {
+      toast.error('No order data found. Please add items to cart and fill details.');
+      return;
+    }
+    if (!transactionId.trim()) {
       toast.error('Please enter transaction ID');
       return;
     }
-
     if (!selectedFile) {
       toast.error('Please upload payment screenshot');
       return;
     }
-
     setIsUploading(true);
-
     try {
-      console.log('Starting order submission...', { checkoutData, transactionId });
-      
       // Upload file to Supabase Storage
       const fileExt = selectedFile.name.split('.').pop();
       const fileName = `${uuidv4()}.${fileExt}`;
-      
-      console.log('Uploading file to storage:', fileName);
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('payment_screenshots')
         .upload(fileName, selectedFile);
-
       if (uploadError) {
-        console.error('File upload error:', uploadError);
-        throw uploadError;
+        setIsUploading(false);
+        toast.error('Failed to upload payment screenshot. Please try again.');
+        return;
       }
-
-      console.log('File uploaded successfully:', uploadData);
-
-      // Update existing orders with payment information
-      console.log('Updating orders with payment information...');
-      
-      const updatePromises = checkoutData.items.map(item => {
-        const updateData = {
-          transaction_id: transactionId,
-          payment_screenshot_path: uploadData?.path || null,
-          status: 'confirmed' // Update status to confirmed after payment
-        };
-        
-        console.log('Updating order for item:', item.name, updateData);
+      // Update all reserved orders for this customer with payment info
+      const updatePromises = dataToUse.items.map(item => {
         return supabase
           .from('order_slots')
-          .update(updateData)
+          .update({
+            transaction_id: transactionId,
+            payment_screenshot_path: uploadData?.path || null,
+            status: 'confirmed'
+          })
           .eq('product_id', item.id)
-          .eq('customer_name', checkoutData.customerDetails.name)
-          .eq('customer_phone', checkoutData.customerDetails.phone)
-          .eq('status', 'reserved') // Update reserved orders
-          .gte('created_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()); // Orders from last 24 hours
+          .eq('customer_name', dataToUse.customerDetails.name)
+          .eq('customer_phone', dataToUse.customerDetails.phone)
+          .eq('status', 'reserved');
       });
-
       const results = await Promise.all(updatePromises);
-      
-      // Check for errors in any of the update operations
       const errors = results.filter(result => result.error);
       if (errors.length > 0) {
-        console.error('Database update errors:', errors);
-        throw new Error(`Failed to update ${errors.length} orders. Please try again.`);
+        setIsUploading(false);
+        toast.error('Failed to update some orders. Please try again.');
+        return;
       }
-
-      // Log successful results for debugging
-      console.log('All orders updated successfully:', results);
-
-      // Clear cart and checkout data
       clearCart();
-      sessionStorage.removeItem('checkoutData');
       setIsOrderComplete(true);
       toast.success('Order placed successfully!');
-      
-      // Navigate to order confirmation after 3 seconds
       setTimeout(() => {
-        const orderId = Date.now().toString(); // Use timestamp as fallback order ID
-        navigate('/order-confirmation', { 
-          state: { 
-            orderId: orderId,
-            orderData: checkoutData 
-          } 
-        });
-      }, 3000);
-      
+        navigate('/order-confirmation');
+      }, 2000);
     } catch (error) {
-      console.error('Error placing order:', error);
-      
-      // Provide more specific error messages
-      if (error instanceof Error) {
-        if (error.message.includes('storage')) {
-          toast.error('Failed to upload payment screenshot. Please try again.');
-        } else if (error.message.includes('database') || error.message.includes('order')) {
-          toast.error('Failed to save order details. Please try again.');
-        } else {
-          toast.error(`Order failed: ${error.message}`);
-        }
-      } else {
-        toast.error('Failed to place order. Please try again.');
-      }
-    } finally {
       setIsUploading(false);
+      toast.error('Failed to place order. Please try again.');
     }
   };
 
-  // Loading state while checking checkout data
-  if (!checkoutData) {
-    return (
-      <div className="page-transition pt-24">
-        <div className="container mx-auto px-4 py-12 text-center">
-          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-8">
-            <X size={48} className="text-red-600" />
-          </div>
-          <h2 className="text-2xl font-bold text-red-700 mb-4">Orders closed for this slot</h2>
-          <p className="text-gray-500 mb-8">Ordering is currently unavailable. Please check back later.</p>
-          <button
-            onClick={() => navigate("/produce")}
-            className="btn-primary"
-          >
-            Back to Products
-          </button>
-        </div>
-      </div>
-    );
-  }
-  // BLOCK ALL ORDERING: Show orders closed message
+  // Always show checkout/payment UI for local testing (even if no checkoutData)
+  // Use dummy data for UI
+  const effectiveCheckoutData = checkoutData && checkoutData.items && checkoutData.items.length > 0
+    ? checkoutData
+    : {
+        items: [
+          { id: 'test-product', name: 'Test Product', price: 100, quantity: 1 }
+        ],
+        total: 100,
+        customerDetails: { name: 'Test User', phone: '9999999999', address: 'Test Address' }
+      };
   return (
     <div className="page-transition pt-24">
-      <div className="container mx-auto px-4 py-12 text-center">
-        <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-8">
-          <X size={48} className="text-red-600" />
+      <div className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
+          <h1 className="text-2xl font-bold mb-6 text-organic-800">Complete Your Payment</h1>
+          <div className="mb-6">
+            <p className="mb-2 text-gray-700">Please pay the total amount using the QR code below and upload a screenshot of your payment. Enter your transaction ID to confirm your order.</p>
+            <div className="flex flex-col items-center justify-center mb-4">
+              <QrCode size={80} className="text-organic-600 mb-2" />
+              <img src="/lovable-uploads/kdcc-qr.png" alt="QR Code" className="w-48 h-48 object-contain border rounded-lg" />
+            </div>
+            <div className="flex flex-col items-center mb-4">
+              <label className="font-semibold mb-2">Transaction ID</label>
+              <input
+                type="text"
+                value={transactionId}
+                onChange={e => setTransactionId(e.target.value)}
+                className="input-field w-full max-w-xs"
+                placeholder="Enter transaction/reference ID"
+                disabled={isUploading || isOrderComplete}
+              />
+            </div>
+            <div className="flex flex-col items-center mb-4">
+              <label className="font-semibold mb-2">Upload Payment Screenshot</label>
+              <input
+                type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                className="hidden"
+                disabled={isUploading || isOrderComplete}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="btn-secondary mb-2"
+                disabled={isUploading || isOrderComplete}
+              >
+                <Upload size={18} className="inline mr-2" />
+                {selectedFile ? 'Change Screenshot' : 'Upload Screenshot'}
+              </button>
+              {filePreview && (
+                <img src={filePreview} alt="Payment Preview" className="w-40 h-40 object-contain border rounded-lg" />
+              )}
+            </div>
+            <button
+              onClick={handleOrderSubmit}
+              className="btn-primary w-full flex items-center justify-center"
+              disabled={isUploading || isOrderComplete}
+            >
+              {isUploading ? (
+                <>
+                  <span className="animate-spin mr-2"><Upload size={18} /></span>
+                  Submitting...
+                </>
+              ) : (
+                <>
+                  <Check size={18} className="mr-2" />
+                  Confirm Payment & Place Order
+                </>
+              )}
+            </button>
+            {isOrderComplete && (
+              <div className="mt-6 text-green-700 font-semibold text-center">
+                Payment received! Redirecting to order confirmation...
+              </div>
+            )}
+          </div>
         </div>
-        <h2 className="text-2xl font-bold text-red-700 mb-4">Orders closed for this slot</h2>
-        <p className="text-gray-500 mb-8">Ordering is currently unavailable. Please check back later.</p>
-        <button
-          onClick={() => navigate("/produce")}
-          className="btn-primary"
-        >
-          Back to Products
-        </button>
       </div>
     </div>
   );

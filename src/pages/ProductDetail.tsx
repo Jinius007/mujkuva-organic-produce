@@ -110,27 +110,8 @@ const ProductDetail = () => {
       </div>
     );
   }
-
-  // BLOCK ALL ORDERING: Show orders closed message
-  return (
-    <div className="page-container text-center py-20">
-      <h2 className="text-3xl font-bold mb-6">{product.name}</h2>
-      <img src={product.image} alt={product.name} className="mx-auto mb-6 max-w-xs rounded-xl shadow-lg" />
-      <div className="text-xl text-gray-700 mb-4">{product.detailedDescription}</div>
-      <div className="text-2xl font-bold text-organic-600 mb-6">
-        ₹{product.price} per {product.unit}
-      </div>
-      <div className="px-4 py-4 bg-red-100 text-red-800 rounded-lg text-xl font-semibold mb-8">
-        Orders closed for this slot
-      </div>
-      <button 
-        onClick={() => navigate("/produce")}
-        className="btn-primary"
-      >
-        Back to Products
-      </button>
-    </div>
-  );
+  // REMOVE BLOCK ALL ORDERING: Always show product details and enable ordering
+  // (No-op: main return is below)
   
   const totalPrice = product.price * quantity;
   

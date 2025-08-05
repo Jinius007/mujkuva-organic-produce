@@ -1,6 +1,7 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 import { motion } from "framer-motion";
 import { Search, ArrowRight } from "lucide-react";
 
@@ -49,6 +50,8 @@ const products: Product[] = [
 const Produce = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   // Filter products based on search term and category
   const filteredProducts = products.filter(product => {
@@ -171,11 +174,13 @@ const Produce = () => {
                     <p className="text-gray-600 mb-4 line-clamp-2">
                       {product.description}
                     </p>
-                    {/* Replace Link with disabled order button */}
                     <button
                       type="button"
-                      onClick={() => window.alert('Orders closed for this slot')}
-                      className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-red-100 text-red-800 font-semibold"
+                      onClick={() => {
+                        addToCart(product, 1);
+                        navigate('/cart');
+                      }}
+                      className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-green-100 text-green-800 font-semibold"
                     >
                       <span>Order Now</span>
                       <ArrowRight size={16} className="ml-2" />
