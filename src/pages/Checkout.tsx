@@ -148,9 +148,13 @@ const Checkout = () => {
                 className="btn-primary mt-4"
                 style={{ width: 'fit-content' }}
                 onClick={() => {
-                  // UPI deep link for supported apps
-                  // Example: upi://pay?pa=yourupi@bank&pn=Name&am=amount&cu=INR
-                  const upiUrl = `upi://pay?mc=5814&pa=yespay.kdcskai2410525@yesbankltd&pn=THE%20MAJKUVA%20ORGANIC%20KHEDUT&am=${effectiveCheckoutData.total}&cu=INR`;
+                  // Dynamic UPI deep link with all required params
+                  const pa = 'yespay.kdcskai2410525@yesbankltd';
+                  const pn = encodeURIComponent('THE MAJKUVA ORGANIC KHEDUT');
+                  const am = effectiveCheckoutData.total.toFixed(2);
+                  const cu = 'INR';
+                  const tn = encodeURIComponent(`Order for ${effectiveCheckoutData.customerDetails.name}`);
+                  const upiUrl = `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=${cu}&tn=${tn}`;
                   window.location.href = upiUrl;
                 }}
               >
