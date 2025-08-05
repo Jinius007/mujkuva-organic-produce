@@ -144,24 +144,33 @@ const Checkout = () => {
             <div className="flex flex-col items-center justify-center mb-4">
               <QrCode size={80} className="text-organic-600 mb-2" />
               <img src="/lovable-uploads/kdcc-qr.png" alt="QR Code" className="w-48 h-48 object-contain border rounded-lg" />
-              <button
-                className="btn-primary mt-4"
-                style={{ width: 'fit-content' }}
-                onClick={() => {
-                  // Dynamic UPI deep link with all required params
-                  const pa = 'yespay.kdcskai2410525@yesbankltd';
-                  // Use pre-encoded payee name as required by UPI spec (with %20 for spaces)
-                  const pn = 'THE%20MAJKUVA%20ORGANIC%20KHEDUT';
-                  const am = effectiveCheckoutData.total.toFixed(2);
-                  const cu = 'INR';
-                  const tn = encodeURIComponent(`Order for ${effectiveCheckoutData.customerDetails.name}`);
-                  const upiUrl = `upi://pay?pa=${pa}&pn=${pn}&am=${am}&cu=${cu}&tn=${tn}`;
-                  window.location.href = upiUrl;
-                }}
-              >
-                Pay via UPI App
-              </button>
-              <span className="text-xs text-gray-500 mt-2">Tap to pay directly using your UPI app</span>
+              <div className="flex flex-col items-center gap-2 mt-4">
+                <button
+                  className="btn-primary"
+                  style={{ width: 'fit-content' }}
+                  onClick={() => {
+                    navigator.clipboard.writeText('yespay.kdcskai2410525@yesbankltd');
+                    toast.success('UPI ID copied to clipboard!');
+                  }}
+                >
+                  Copy UPI ID
+                </button>
+                <button
+                  className="btn-secondary"
+                  style={{ width: 'fit-content' }}
+                  onClick={() => {
+                    // Download the QR code image
+                    const link = document.createElement('a');
+                    link.href = '/lovable-uploads/kdcc-qr.png';
+                    link.download = 'mujkuva-upi-qr.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                  }}
+                >
+                  Download QR Code
+                </button>
+              </div>
             </div>
             <div className="flex flex-col items-center mb-4">
               <label className="font-semibold mb-2">Transaction ID</label>
