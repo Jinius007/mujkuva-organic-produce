@@ -63,12 +63,7 @@ const Checkout = () => {
   };
 
   const handleOrderSubmit = async () => {
-    // Use effectiveCheckoutData for local/dev or real checkoutData for prod
-    const dataToUse = checkoutData && checkoutData.items && checkoutData.items.length > 0 ? checkoutData : null;
-    if (!dataToUse) {
-      toast.error('No order data found. Please add items to cart and fill details.');
-      return;
-    }
+    // Always allow payment upload, even if cart/session is empty
     if (!transactionId.trim()) {
       toast.error('Please enter transaction ID');
       return;
@@ -90,50 +85,54 @@ const Checkout = () => {
         toast.error('Failed to upload payment screenshot. Please try again.');
         return;
       }
-      // Update all reserved orders for this customer with payment info
-      const updatePromises = dataToUse.items.map(item => {
-        return supabase
-          .from('order_slots')
-          .update({
-            transaction_id: transactionId,
-            payment_screenshot_path: uploadData?.path || null,
-            status: 'confirmed'
-          })
-          .eq('product_id', item.id)
-          .eq('customer_name', dataToUse.customerDetails.name)
-          .eq('customer_phone', dataToUse.customerDetails.phone)
-          .eq('status', 'reserved');
-      });
-      const results = await Promise.all(updatePromises);
-      const errors = results.filter(result => result.error);
-      if (errors.length > 0) {
-        setIsUploading(false);
-        toast.error('Failed to update some orders. Please try again.');
-        return;
+      // If there is valid order data, update reserved orders; otherwise, just upload screenshot
+      if (checkoutData && checkoutData.items && checkoutData.items.length > 0) {
+        const updatePromises = checkoutData.items.map(item => {
+          return supabase
+            .from('order_slots')
+            .update({
+              transaction_id: transactionId,
+              payment_screenshot_path: uploadData?.path || null,
+              status: 'confirmed'
+            })
+            .eq('product_id', item.id)
+            .eq('customer_name', checkoutData.customerDetails.name)
+            .eq('customer_phone', checkoutData.customerDetails.phone)
+            .eq('status', 'reserved');
+        });
+        const results = await Promise.all(updatePromises);
+        const errors = results.filter(result => result.error);
+        if (errors.length > 0) {
+          setIsUploading(false);
+          toast.error('Failed to update some orders. Please try again.');
+          return;
+        }
       }
       clearCart();
       setIsOrderComplete(true);
-      toast.success('Order placed successfully!');
+      toast.success('Payment uploaded successfully!');
       setTimeout(() => {
         navigate('/order-confirmation');
       }, 2000);
     } catch (error) {
       setIsUploading(false);
-      toast.error('Failed to place order. Please try again.');
+      toast.error('Failed to upload payment. Please try again.');
     }
   };
 
   // Always show checkout/payment UI for local testing (even if no checkoutData)
   // Use dummy data for UI
-  const effectiveCheckoutData = checkoutData && checkoutData.items && checkoutData.items.length > 0
-    ? checkoutData
-    : {
-        items: [
-          { id: 'test-product', name: 'Test Product', price: 100, quantity: 1 }
-        ],
-        total: 100,
-        customerDetails: { name: 'Test User', phone: '9999999999', address: 'Test Address' }
-      };
+  let effectiveCheckoutData: CheckoutData;
+  if (checkoutData && checkoutData.items && checkoutData.items.length > 0) {
+    effectiveCheckoutData = checkoutData;
+  } else {
+    // Allow upload even if cart is not present
+    effectiveCheckoutData = {
+      items: [],
+      total: 0,
+      customerDetails: { name: '', phone: '', address: '' }
+    };
+  }
   return (
     <div className="page-transition pt-24">
       <div className="container mx-auto px-4 py-12">

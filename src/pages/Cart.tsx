@@ -49,10 +49,7 @@ const Cart = () => {
         throw new Error('Failed to check existing orders');
       }
 
-      if (existingReservations && existingReservations.length > 0) {
-        toast.error('You already have a pending order. Please complete your payment first.');
-        return;
-      }
+      // Removed block: allow user to proceed to payment even if there is a pending order
       
       // Save each item as a separate order in the database
       const orderDate = new Date().toISOString().slice(0, 10); // Today's date
