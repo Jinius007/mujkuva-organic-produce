@@ -177,13 +177,13 @@ const Produce = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        // Orders are closed for this slot
-                        alert("Orders closed for this slot!");
+                        addToCart(product, 1);
+                        navigate('/cart');
                       }}
-                      className="flex items-center text-gray-500 font-medium cursor-not-allowed transition-colors w-full justify-center py-2 rounded bg-gray-100 text-gray-600 font-semibold"
-                      disabled
+                      className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-green-100 text-green-800 font-semibold"
                     >
-                      <span>Orders closed for this slot!</span>
+                      <span>Order Now</span>
+                      <ArrowRight size={16} className="ml-2" />
                     </button>
                   </div>
                 </motion.div>
