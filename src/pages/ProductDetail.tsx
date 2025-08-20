@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Minus, Plus, Award, Leaf, ShoppingBag, ShoppingCart, X } from "lucide-react";
 import { toast } from "sonner";
-import { useCart } from "@/contexts/CartContext";
+// import { useCart } from "@/contexts/CartContext";
 
 // Define product types
 interface Product {
@@ -89,7 +89,10 @@ const productsData: Record<string, Product> = {
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const { addToCart, getAvailableStock, isStockAvailable, getStockMessage, refreshStockData } = useCart();
+  // Orders closed for this slot
+  const addToCart = () => {
+    toast.error("Orders closed for this slot");
+  };
   const [quantity, setQuantity] = useState(1);
   const [stockMessage, setStockMessage] = useState("");
   
@@ -210,124 +213,14 @@ const ProductDetail = () => {
             </div>
             
             {/* Stock Information */}
-            <div className="mb-6">
-              {isOutOfStock ? (
-                <div className="px-4 py-2 bg-red-100 text-red-800 rounded-lg">
-                  <strong>Out of Stock</strong> for batch (July 26-29, 2025)
+            return (
+              <div className="page-transition pt-24">
+                <div className="container mx-auto px-4 py-12">
+                  <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
+                    <h1 className="text-2xl font-bold mb-6 text-organic-800">Orders closed for this slot</h1>
+                    <p className="mb-2 text-gray-700">Ordering is currently unavailable. Please check back later.</p>
+                  </div>
                 </div>
-              ) : (
-                <div className="px-4 py-2 bg-green-100 text-green-800 rounded-lg">
-                  <strong>Stock Available:</strong> 
-                  {product.id === 'dudhi' 
-                    ? ` ${availableStock} pieces` 
-                    : ` ${(availableStock * 0.5).toFixed(1)}kg (${availableStock} units of 500g)`
-                  } for batch (July 26-29, 2025)
-                </div>
+              </div>
+            );
               )}
-            </div>
-            
-            {/* Stock Warning Message */}
-            {stockMessage && (
-              <div className="mb-6 px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg">
-                <strong>Stock Alert:</strong> {stockMessage}
-              </div>
-            )}
-            
-            <p className="text-gray-700 mb-8">
-              {product.detailedDescription}
-            </p>
-            
-            <div className="mb-8">
-              <h3 className="text-lg font-bold text-organic-800 mb-3">Nutritional Benefits</h3>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {product.nutritionalInfo.map((info, index) => (
-                  <li key={index} className="flex items-start">
-                    <Leaf size={16} className="text-organic-500 mt-1 mr-2 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">{info}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className="mb-12">
-              <h3 className="text-lg font-bold text-organic-800 mb-3">Health Benefits</h3>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {product.benefits.map((benefit, index) => (
-                  <li key={index} className="flex items-start">
-                    <Award size={16} className="text-organic-500 mt-1 mr-2 flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">{benefit}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            
-            <div className={`flex flex-col md:flex-row md:items-center md:justify-between space-y-6 md:space-y-0 ${isOutOfStock ? 'opacity-50 pointer-events-none' : ''}`}>
-              <div>
-                <label className="block text-gray-700 font-medium mb-2">
-                  {product.id === 'dudhi' ? 'Quantity (per piece)' : 'Quantity (Minimum: 500g, Multiples of 500g)'}
-                </label>
-                <div className="flex items-center">
-                  <button 
-                    type="button"
-                    onClick={decrementQuantity}
-                    disabled={isOutOfStock}
-                    className="w-10 h-10 rounded-l-md border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <div className="w-14 h-10 border-t border-b border-gray-300 flex items-center justify-center font-medium">
-                    {quantity}
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={incrementQuantity}
-                    disabled={isOutOfStock}
-                    className="w-10 h-10 rounded-r-md border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    <Plus size={16} />
-                  </button>
-                  <div className="ml-4 text-gray-700">
-                    {product.id === 'dudhi' 
-                      ? `${quantity} pieces total`
-                      : `x 500g (${(quantity * 0.5).toFixed(1)} kg total)`
-                    }
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="text-gray-600 mb-1">Total Amount</div>
-                <div className="text-2xl font-bold text-organic-800">
-                  ₹{totalPrice.toFixed(2)}
-                </div>
-              </div>
-            </div>
-            
-            <div className="mt-8 flex flex-col sm:flex-row gap-4">
-              <button 
-                onClick={handleAddToCart}
-                disabled={isOutOfStock}
-                className={`btn-primary flex-1 flex items-center justify-center space-x-2 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : ''}`}
-              >
-                <ShoppingCart size={18} />
-                <span>
-                  {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
-                </span>
-              </button>
-              
-              <button 
-                onClick={() => navigate("/cart")}
-                className="btn-secondary flex-1 flex items-center justify-center space-x-2"
-              >
-                <ShoppingBag size={18} />
-                <span>View Cart</span>
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default ProductDetail;

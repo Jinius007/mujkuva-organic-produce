@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "@/contexts/CartContext";
+// import { useCart } from "@/contexts/CartContext";
 import { motion } from "framer-motion";
 import { Search, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 
 // Define product types
 interface Product {
@@ -51,162 +51,115 @@ const Produce = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  // Orders closed for this slot
+  const handleOrderNow = () => {
+    toast.error("Orders closed for this slot");
+  };
 
-  // Filter products based on search term and category
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                        product.description.toLowerCase().includes(searchTerm.toLowerCase());
-    
+    const matchesSearchTerm = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory ? product.category === selectedCategory : true;
-    
-    return matchesSearch && matchesCategory;
+    return matchesSearchTerm && matchesCategory;
   });
 
-  // Get unique categories
-  const categories = Array.from(new Set(products.map(product => product.category)));
-
   return (
-    <div className="page-transition pt-24">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-organic-50 to-white py-16">
+    <div>
+      {/* Search and Filter Section */}
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.h1 
-              className="section-title"
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Our Organic Produce
-            </motion.h1>
-            <motion.div 
-              className="w-24 h-1 bg-earth-400 mx-auto mb-8"
-              initial={{ width: 0 }}
-              animate={{ width: 96 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-            ></motion.div>
-            <motion.p 
-              className="text-lg text-gray-700 mb-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              Fresh, certified organic produce from our cooperative directly to your home
-            </motion.p>
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          {/* Search and Filter */}
-          <div className="mb-12">
-            <div className="flex flex-col md:flex-row gap-4 md:items-center mb-8">
-              <div className="flex-grow relative">
-                <div className="absolute inset-y-0 left-3 flex items-center">
-                  <Search size={18} className="text-gray-400" />
-                </div>
-                <input 
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <h1 className="text-4xl font-serif font-bold text-organic-800 mb-4">
+              Fresh Organic Produce
+            </h1>
+            <p className="text-gray-700 mb-8">
+              Discover the taste of health with our organically grown fruits and vegetables.
+            </p>
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative w-full">
+                <input
                   type="text"
-                  placeholder="Search for products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="input-field pl-10"
+                  placeholder="Search for products..."
+                  className="w-full py-3 px-4 rounded-full border border-gray-300 focus:ring-2 focus:ring-organic-500 focus:outline-none"
                 />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <Search className="text-gray-400" />
+                </div>
               </div>
-              
-              <div className="flex space-x-4 overflow-x-auto pb-2 md:pb-0">
-                <button 
-                  className={`py-2 px-4 rounded-full font-medium text-sm whitespace-nowrap transition-colors ${
-                    selectedCategory === null
-                      ? "bg-organic-500 text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                  onClick={() => setSelectedCategory(null)}
+              <div className="relative w-full">
+                <select
+                  value={selectedCategory || ""}
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                  className="w-full py-3 px-4 rounded-full border border-gray-300 focus:ring-2 focus:ring-organic-500 focus:outline-none"
                 >
-                  All Products
-                </button>
-                
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    className={`py-2 px-4 rounded-full font-medium text-sm whitespace-nowrap transition-colors ${
-                      selectedCategory === category
-                        ? "bg-organic-500 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                    }`}
-                    onClick={() => setSelectedCategory(category)}
-                  >
-                    {category}
-                  </button>
-                ))}
+                  <option value="">All Categories</option>
+                  <option value="Gourds">Gourds</option>
+                  <option value="Vegetables">Vegetables</option>
+                </select>
               </div>
             </div>
           </div>
           
-          {/* Products Grid */}
-          {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover-scale"
-                >
-                  <div className="h-56 overflow-hidden">
-                    <img 
-                      src={product.image} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-3">
-                      <h3 className="text-xl font-bold text-organic-800">{product.name}</h3>
-                      <div className="px-3 py-1 bg-organic-100 text-organic-700 rounded-full text-sm font-medium">
-                        ₹{product.price} per {product.unit}
-                      </div>
+          <div className="max-w-4xl mx-auto">
+            {filteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover-scale"
+                  >
+                    <div className="h-56 overflow-hidden">
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                      />
                     </div>
-                    <p className="text-gray-600 mb-4 line-clamp-2">
-                      {product.description}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        addToCart(product, 1);
-                        navigate('/cart');
-                      }}
-                      className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-green-100 text-green-800 font-semibold"
-                    >
-                      <span>Order Now</span>
-                      <ArrowRight size={16} className="ml-2" />
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🔍</div>
-              <h3 className="text-2xl font-bold text-gray-700 mb-2">No Products Found</h3>
-              <p className="text-gray-500 mb-6">
-                We couldn't find any products matching your search criteria.
-              </p>
-              <button 
-                onClick={() => {
-                  setSearchTerm("");
-                  setSelectedCategory(null);
-                }}
-                className="btn-primary"
-              >
-                Clear Filters
-              </button>
-            </div>
-          )}
+                    <div className="p-6">
+                      <div className="flex justify-between items-center mb-3">
+                        <h3 className="text-xl font-bold text-organic-800">{product.name}</h3>
+                        <div className="px-3 py-1 bg-organic-100 text-organic-700 rounded-full text-sm font-medium">
+                          ₹{product.price} per {product.unit}
+                        </div>
+                      </div>
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {product.description}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleOrderNow}
+                        className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-green-100 text-green-800 font-semibold"
+                      >
+                        <span>Order Now</span>
+                        <ArrowRight size={16} className="ml-2" />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-6xl mb-4">🔍</div>
+                <h3 className="text-2xl font-bold text-gray-700 mb-2">No Products Found</h3>
+                <p className="text-gray-500 mb-6">
+                  We couldn't find any products matching your search criteria.
+                </p>
+                <button 
+                  onClick={() => {
+                    setSearchTerm("");
+                    setSelectedCategory(null);
+                  }}
+                  className="btn-primary"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </section>
       

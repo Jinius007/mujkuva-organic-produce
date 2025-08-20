@@ -62,62 +62,9 @@ const Checkout = () => {
     }
   };
 
-  const handleOrderSubmit = async () => {
-    // Always allow payment upload, even if cart/session is empty
-    if (!transactionId.trim()) {
-      toast.error('Please enter transaction ID');
-      return;
-    }
-    if (!selectedFile) {
-      toast.error('Please upload payment screenshot');
-      return;
-    }
-    setIsUploading(true);
-    try {
-      // Upload file to Supabase Storage
-      const fileExt = selectedFile.name.split('.').pop();
-      const fileName = `${uuidv4()}.${fileExt}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('payment_screenshots')
-        .upload(fileName, selectedFile);
-      if (uploadError) {
-        setIsUploading(false);
-        toast.error('Failed to upload payment screenshot. Please try again.');
-        return;
-      }
-      // If there is valid order data, update reserved orders; otherwise, just upload screenshot
-      if (checkoutData && checkoutData.items && checkoutData.items.length > 0) {
-        const updatePromises = checkoutData.items.map(item => {
-          return supabase
-            .from('order_slots')
-            .update({
-              transaction_id: transactionId,
-              payment_screenshot_path: uploadData?.path || null,
-              status: 'confirmed'
-            })
-            .eq('product_id', item.id)
-            .eq('customer_name', checkoutData.customerDetails.name)
-            .eq('customer_phone', checkoutData.customerDetails.phone)
-            .eq('status', 'reserved');
-        });
-        const results = await Promise.all(updatePromises);
-        const errors = results.filter(result => result.error);
-        if (errors.length > 0) {
-          setIsUploading(false);
-          toast.error('Failed to update some orders. Please try again.');
-          return;
-        }
-      }
-      clearCart();
-      setIsOrderComplete(true);
-      toast.success('Payment uploaded successfully!');
-      setTimeout(() => {
-        navigate('/order-confirmation');
-      }, 2000);
-    } catch (error) {
-      setIsUploading(false);
-      toast.error('Failed to upload payment. Please try again.');
-    }
+  // Orders closed for this slot
+  const handleOrderSubmit = () => {
+    toast.error('Orders closed for this slot');
   };
 
   // Always show checkout/payment UI for local testing (even if no checkoutData)
@@ -153,14 +100,14 @@ const Checkout = () => {
                   }}
                 >
                   Copy UPI ID
-                </button>
                 <button
-                  className="btn-secondary"
+                  className="btn-primary flex items-center gap-2 opacity-60 cursor-not-allowed"
                   style={{ width: 'fit-content' }}
-                  onClick={() => {
-                    // Download the QR code image
-                    const link = document.createElement('a');
-                    link.href = '/lovable-uploads/kdcc-qr.png';
+                  onClick={handleOrderSubmit}
+                  disabled
+                >
+                  Orders closed for this slot
+                </button>
                     link.download = 'mujkuva-upi-qr.png';
                     document.body.appendChild(link);
                     link.click();

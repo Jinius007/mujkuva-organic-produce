@@ -24,92 +24,9 @@ const Cart = () => {
     }
   };
 
-  const handleProceedToPayment = async () => {
-    if (!customerDetails.name || !customerDetails.phone || !customerDetails.address) {
-      toast.error("Please fill in all customer details");
-      return;
-    }
-
-    setIsSubmitting(true);
-    
-    try {
-      console.log('Starting to save orders to database...', { items: state.items, customerDetails });
-      
-      // Check for existing reserved orders for this customer
-      const { data: existingReservations, error: checkError } = await supabase
-        .from('order_slots')
-        .select('id')
-        .eq('customer_name', customerDetails.name)
-        .eq('customer_phone', customerDetails.phone)
-        .eq('status', 'reserved')
-        .gte('created_at', new Date(Date.now() - 30 * 60 * 1000).toISOString()); // Last 30 minutes
-
-      if (checkError) {
-        console.error('Error checking existing reservations:', checkError);
-        throw new Error('Failed to check existing orders');
-      }
-
-      // Removed block: allow user to proceed to payment even if there is a pending order
-      
-      // Save each item as a separate order in the database
-      const orderDate = new Date().toISOString().slice(0, 10); // Today's date
-      const orderPromises = state.items.map(item => {
-        const weightKg = item.quantity * 0.5; // 0.5kg per unit
-        
-        const orderData = {
-          product_id: item.id,
-          product_name: item.name,
-          customer_name: customerDetails.name,
-          customer_phone: customerDetails.phone,
-          customer_address: customerDetails.address,
-          quantity: item.quantity,
-          weight_kg: weightKg,
-          total_price: item.price * item.quantity,
-          order_date: orderDate,
-          status: 'reserved', // Reserve slots when user proceeds to payment
-          transaction_id: null, // Will be updated after payment
-          payment_screenshot_path: null // Will be updated after payment
-        };
-        
-        console.log('Inserting order:', orderData);
-        return supabase.from('order_slots').insert(orderData);
-      });
-
-      const results = await Promise.all(orderPromises);
-      
-      // Check for errors in any of the insert operations
-      const errors = results.filter(result => result.error);
-      if (errors.length > 0) {
-        console.error('Database insert errors:', errors);
-        throw new Error(`Failed to save ${errors.length} orders. Please try again.`);
-      }
-
-      console.log('All orders saved successfully:', results);
-
-      // Store checkout data for payment page
-      const checkoutData = {
-        items: state.items,
-        total: state.total,
-        customerDetails
-      };
-      
-      sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
-      
-      // Clear cart and refresh stock data
-      clearCart();
-      await refreshStockData();
-      
-      toast.success("Order details saved! Proceed to payment.");
-      
-      // Navigate to checkout/payment page
-      navigate("/checkout");
-      
-    } catch (error) {
-      console.error('Error saving order:', error);
-      toast.error("Failed to save order details. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  // Orders closed for this slot
+  const handleProceedToPayment = () => {
+    toast.error("Orders closed for this slot");
   };
 
   return (
@@ -251,11 +168,10 @@ const Cart = () => {
 
                   <button
                     onClick={handleProceedToPayment}
-                    disabled={!customerDetails.name || !customerDetails.phone || !customerDetails.address || isSubmitting}
-                    className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="btn-primary w-full flex items-center justify-center space-x-2 opacity-60 cursor-not-allowed"
+                    disabled
                   >
-                    <span>{isSubmitting ? 'Saving Order...' : 'Make Payment'}</span>
-                    <ArrowRight size={18} />
+                    <span>Orders closed for this slot</span>
                   </button>
                 </div>
               </div>
