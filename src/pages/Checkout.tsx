@@ -77,43 +77,62 @@ const Checkout = () => {
     setIsUploading(true);
 
     try {
+      console.log('Starting order submission...');
+      console.log('Checkout data:', effectiveCheckoutData);
+      console.log('Cart state:', cartState);
+      console.log('Transaction ID:', transactionId);
+      console.log('Selected file:', selectedFile);
+
       // Upload payment screenshot
       const fileName = `payment_${Date.now()}_${selectedFile.name}`;
+      console.log('Attempting to upload file:', fileName);
+      
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('payment_screenshots')
         .upload(fileName, selectedFile);
 
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
+      console.log('File uploaded successfully:', uploadData);
+
       // Create order record in order_slots table
       const orderId = uuidv4();
-      const { error: orderError } = await supabase
+      const orderData = {
+        id: orderId,
+        product_id: effectiveCheckoutData.items[0]?.id || 'mixed',
+        product_name: effectiveCheckoutData.items.length === 1 
+          ? effectiveCheckoutData.items[0].name 
+          : 'Mixed Products',
+        customer_name: effectiveCheckoutData.customerDetails?.name || '',
+        customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
+        customer_address: effectiveCheckoutData.customerDetails?.address || '',
+        quantity: effectiveCheckoutData.items.reduce((sum, item) => sum + item.quantity, 0),
+        weight_kg: effectiveCheckoutData.items.reduce((sum, item) => sum + item.quantity, 0), // Since all items are now in kg
+        total_price: effectiveCheckoutData.total,
+        order_date: new Date().toISOString().split('T')[0], // Today's date
+        status: 'confirmed',
+        transaction_id: transactionId,
+        payment_screenshot_path: fileName,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Attempting to insert order data:', orderData);
+
+      const { data: orderDataResult, error: orderError } = await supabase
         .from('order_slots')
-        .insert({
-          id: orderId,
-          product_id: effectiveCheckoutData.items[0]?.id || 'mixed',
-          product_name: effectiveCheckoutData.items.length === 1 
-            ? effectiveCheckoutData.items[0].name 
-            : 'Mixed Products',
-          customer_name: effectiveCheckoutData.customerDetails?.name || '',
-          customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
-          customer_address: effectiveCheckoutData.customerDetails?.address || '',
-          quantity: effectiveCheckoutData.items.reduce((sum, item) => sum + item.quantity, 0),
-          weight_kg: effectiveCheckoutData.items.reduce((sum, item) => sum + item.quantity, 0), // Since all items are now in kg
-          total_price: effectiveCheckoutData.total,
-          order_date: new Date().toISOString().split('T')[0], // Today's date
-          status: 'confirmed',
-          transaction_id: transactionId,
-          payment_screenshot_path: fileName,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        });
+        .insert(orderData)
+        .select();
 
       if (orderError) {
+        console.error('Database insert error:', orderError);
         throw orderError;
       }
+
+      console.log('Order inserted successfully:', orderDataResult);
 
       // Clear cart and show success
       clearCart();
