@@ -37,19 +37,49 @@ export async function testSupabaseConnection() {
     
     // Test 2: Storage bucket access
     console.log('2. Testing storage bucket access...');
+    console.log('   - Attempting to list all storage buckets...');
+    
     const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
     
     if (bucketError) {
       console.error('❌ Storage access failed:', bucketError);
       console.error('   - Error message:', bucketError.message);
+      console.error('   - This suggests storage permissions are blocked');
       return false;
     }
     
+    console.log('   - Raw buckets response:', buckets);
+    console.log('   - Buckets array length:', buckets?.length || 0);
     console.log('Available buckets:', buckets.map(b => ({ id: b.id, name: b.name, public: b.public })));
+    
+    // Try to access the specific bucket directly
+    console.log('3. Testing direct bucket access...');
+    try {
+      const { data: bucketInfo, error: bucketInfoError } = await supabase.storage
+        .from('payment_screenshots')
+        .list('', { limit: 1 });
+      
+      if (bucketInfoError) {
+        console.error('❌ Direct bucket access failed:', bucketInfoError);
+        console.error('   - Error message:', bucketInfoError.message);
+        console.error('   - This suggests the bucket exists but RLS policies block access');
+      } else {
+        console.log('✅ Direct bucket access successful');
+        console.log('   - Bucket contents:', bucketInfo);
+      }
+    } catch (directError) {
+      console.error('❌ Direct bucket access exception:', directError);
+    }
     
     const paymentBucket = buckets.find(b => b.id === 'payment_screenshots');
     if (!paymentBucket) {
-      console.error('❌ payment_screenshots bucket not found');
+      console.error('❌ payment_screenshots bucket not found in list');
+      console.error('   - Bucket exists in Supabase but website cannot see it');
+      console.error('   - This suggests a storage permissions issue');
+      console.error('   - Possible causes:');
+      console.error('     • Storage RLS policies blocking access');
+      console.error('     • API key lacks storage permissions');
+      console.error('     • Bucket visibility settings');
       return false;
     }
     
