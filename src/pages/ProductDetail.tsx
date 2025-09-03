@@ -68,7 +68,7 @@ const productsData: Record<string, Product> = {
     name: "Banana",
     description: "Fresh organic green bananas, naturally grown and packed with essential nutrients.",
     detailedDescription: "Our organic green bananas are cultivated using traditional farming methods without any chemical inputs. Known for their nutritional value and versatility, these bananas are perfect for cooking and provide numerous health benefits.",
-    price: 40,
+    price: 30,
     unit: "kg",
     image: "/lovable-uploads/WhatsApp Image 2025-09-03 at 09.34.58.jpeg",
     nutritionalInfo: [
