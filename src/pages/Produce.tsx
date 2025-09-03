@@ -22,27 +22,36 @@ const products: Product[] = [
     id: "little-gourd",
     name: "Little Gourd (Tindora)",
     description: "Farm fresh, organically grown little gourd with exceptional taste and nutritional value.",
-    price: 50,
-    unit: "500g",
+    price: 80,
+    unit: "kg",
     image: "/lovable-uploads/faf0beb0-6926-4c2d-a405-283f9c98c26b.png",
     category: "Gourds"
   },
   {
-    id: "bhindi",
-    name: "Bhindi (Okra)",
-    description: "Fresh organic bhindi, crispy and nutritious. Perfect for healthy cooking.",
+    id: "bajra",
+    name: "Bajra (Pearl Millet)",
+    description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking.",
     price: 40,
-    unit: "500g",
-    image: "/lovable-uploads/e19656d6-a849-47ba-8795-7c1f88dd326d.png",
-    category: "Vegetables"
+    unit: "kg",
+    image: "/lovable-uploads/ba79b90b-bbdf-419c-b53f-691ef85173c4.png",
+    category: "Grains"
   },
   {
-    id: "dudhi",
-    name: "Dudhi (Bottle Gourd)",
-    description: "Fresh organic bottle gourd, healthy and versatile. Great for curries and soups.",
+    id: "banana",
+    name: "Banana",
+    description: "Fresh organic green bananas, naturally grown and packed with essential nutrients.",
     price: 40,
-    unit: "per piece",
-    image: "/lovable-uploads/0124ffce-e145-407b-9ca8-dd9fcb4b700c.png",
+    unit: "kg",
+    image: "/lovable-uploads/23941a2e-e600-4a24-bd5e-5f435b868c8a.png",
+    category: "Fruits"
+  },
+  {
+    id: "galki",
+    name: "Galki (Ridge Gourd)",
+    description: "Fresh organic ridge gourd, healthy and versatile. Great for curries and soups.",
+    price: 40,
+    unit: "kg",
+    image: "/lovable-uploads/bhindi.png",
     category: "Gourds"
   }
 ];
@@ -95,7 +104,8 @@ const Produce = () => {
                 >
                   <option value="">All Categories</option>
                   <option value="Gourds">Gourds</option>
-                  <option value="Vegetables">Vegetables</option>
+                  <option value="Grains">Grains</option>
+                  <option value="Fruits">Fruits</option>
                 </select>
               </div>
             </div>
@@ -112,11 +122,12 @@ const Produce = () => {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 hover-scale"
                   >
-                    <div className="h-56 overflow-hidden">
+                    <div className="h-64 w-full overflow-hidden">
                       <img 
                         src={product.image} 
                         alt={product.name} 
                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        style={{ aspectRatio: '1/1' }}
                       />
                     </div>
                     <div className="p-6">
