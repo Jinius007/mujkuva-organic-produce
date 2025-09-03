@@ -24,9 +24,23 @@ const Cart = () => {
     }
   };
 
-  // Orders closed for this slot
+  // Restore proper payment functionality
   const handleProceedToPayment = () => {
-    toast.error("Orders closed for this slot");
+    if (!customerDetails.name.trim() || !customerDetails.phone.trim() || !customerDetails.address.trim()) {
+      toast.error("Please fill in all delivery details");
+      return;
+    }
+
+    // Store checkout data in sessionStorage for the checkout page
+    const checkoutData = {
+      items: state.items,
+      total: state.total,
+      customerDetails: customerDetails
+    };
+    sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+
+    // Navigate to checkout page
+    navigate('/checkout');
   };
 
   return (
@@ -81,10 +95,7 @@ const Cart = () => {
                           <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
                           <p className="text-gray-600">₹{item.price} per {item.unit}</p>
                            <p className="text-sm text-gray-500">
-                            {item.id === 'dudhi' 
-                              ? `${item.quantity} pieces total`
-                              : `${(item.quantity * 0.5).toFixed(1)}kg total`
-                            }
+                            {item.quantity}kg total
                           </p>
                         </div>
                         <div className="flex items-center space-x-3">
@@ -168,10 +179,11 @@ const Cart = () => {
 
                   <button
                     onClick={handleProceedToPayment}
-                    className="btn-primary w-full flex items-center justify-center space-x-2 opacity-60 cursor-not-allowed"
-                    disabled
+                    className="btn-primary w-full flex items-center justify-center space-x-2"
+                    disabled={isSubmitting}
                   >
-                    <span>Orders closed for this slot</span>
+                    <span>Make Payment</span>
+                    <ArrowRight size={20} />
                   </button>
                 </div>
               </div>
