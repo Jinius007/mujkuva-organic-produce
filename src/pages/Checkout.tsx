@@ -100,6 +100,7 @@ const Checkout = () => {
                   }}
                 >
                   Copy UPI ID
+                </button>
                 <button
                   className="btn-primary flex items-center gap-2 opacity-60 cursor-not-allowed"
                   style={{ width: 'fit-content' }}
@@ -108,6 +109,12 @@ const Checkout = () => {
                 >
                   Orders closed for this slot
                 </button>
+                <button
+                  className="btn-primary"
+                  style={{ width: 'fit-content' }}
+                  onClick={() => {
+                    const link = document.createElement('a');
+                    link.href = '/lovable-uploads/kdcc-qr.png';
                     link.download = 'mujkuva-upi-qr.png';
                     document.body.appendChild(link);
                     link.click();

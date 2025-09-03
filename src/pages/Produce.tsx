@@ -16,7 +16,7 @@ interface Product {
   category: string;
 }
 
-// Sample product data
+// Updated produce list - removed bhindi/dudhi, added bajra/banana/galki
 const products: Product[] = [
   {
     id: "little-gourd",
