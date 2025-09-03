@@ -24,7 +24,7 @@ interface CheckoutData {
 
 const Checkout = () => {
   const navigate = useNavigate();
-  const { clearCart } = useCart();
+  const { clearCart, state: cartState } = useCart();
   const [checkoutData, setCheckoutData] = useState<CheckoutData | null>(null);
   const [transactionId, setTransactionId] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -133,18 +133,27 @@ const Checkout = () => {
     }
   };
 
-  // Always show checkout/payment UI for local testing (even if no checkoutData)
-  // Use dummy data for UI
+  // Use cart data directly and validate before allowing checkout
   let effectiveCheckoutData: CheckoutData;
   if (checkoutData && checkoutData.items && checkoutData.items.length > 0) {
     effectiveCheckoutData = checkoutData;
-  } else {
-    // Allow upload even if cart is not present
+  } else if (cartState.items && cartState.items.length > 0) {
+    // Use cart data if no checkout data but cart has items
     effectiveCheckoutData = {
-      items: [],
-      total: 0,
+      items: cartState.items.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      total: cartState.total,
       customerDetails: { name: '', phone: '', address: '' }
     };
+  } else {
+    // No items available - redirect to produce page
+    toast.error('No items in cart. Please add items before checkout.');
+    navigate('/produce');
+    return null;
   }
   return (
     <div className="page-transition pt-24">
