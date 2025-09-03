@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Minus, Plus, Award, Leaf, ShoppingBag, ShoppingCart, X } from "lucide-react";
 import { toast } from "sonner";
-// import { useCart } from "@/contexts/CartContext";
+import { useCart } from "@/contexts/CartContext";
 
 // Define product types
 interface Product {
@@ -111,6 +111,7 @@ const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
+  const { addToCart } = useCart();
   
   // Get product details
   const product = productId ? productsData[productId] : null;
@@ -132,9 +133,41 @@ const ProductDetail = () => {
   
   // Handle add to cart
   const handleAddToCart = () => {
-    // Restore ordering functionality
-    toast.success(`Added ${quantity} units to cart`);
-    // Here you can add the actual cart logic when ready
+    if (product.id === "little-gourd") {
+      if (quantity > 10) {
+        toast.error("You cannot add more than 10 units of Little Gourd.");
+        return;
+      }
+    } else if (product.id === "bajra") {
+      if (quantity > 20) {
+        toast.error("You cannot add more than 20 units of Bajra.");
+        return;
+      }
+    } else if (product.id === "banana") {
+      if (quantity > 15) {
+        toast.error("You cannot add more than 15 units of Banana.");
+        return;
+      }
+    } else if (product.id === "galki") {
+      if (quantity > 10) {
+        toast.error("You cannot add more than 10 units of Galki.");
+        return;
+      }
+    }
+         const success = addToCart({
+       id: product.id,
+       name: product.name,
+       price: product.price,
+       unit: product.unit,
+       image: product.image,
+     }, quantity);
+     
+          if (success) {
+       toast.success(`Added ${quantity}kg of ${product.name} to cart`);
+       setQuantity(1); // Reset quantity
+     } else {
+       toast.error("Could not add to cart. Please check stock availability.");
+     }
   };
   
   // Handle quantity changes

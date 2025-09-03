@@ -41,7 +41,7 @@ const products: Product[] = [
     id: "banana",
     name: "Banana",
     description: "Fresh organic green bananas, naturally grown and packed with essential nutrients.",
-    price: 40,
+    price: 30,
     unit: "kg",
     image: "/lovable-uploads/WhatsApp Image 2025-09-03 at 09.34.58.jpeg",
     category: "Fruits"

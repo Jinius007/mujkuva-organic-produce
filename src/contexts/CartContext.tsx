@@ -10,11 +10,12 @@ export interface CartItem {
   quantity: number; // For dudhi: pieces, for others: 500g units
 }
 
-// Stock limits for the July 26-29, 2025 batch
+// Stock limits for the current batch
 const STOCK_LIMITS = {
-  'dudhi': 60, // 60 pieces (30 kg)
-  'bhindi': 80, // 80 units of 500g (40 kg) 
-  'little-gourd': 40, // 40 units of 500g (20 kg)
+  'little-gourd': 40, // 40 kg
+  'bajra': 100, // 100 kg
+  'banana': 80, // 80 kg
+  'galki': 60, // 60 kg
 };
 
 const ORDER_DATE_START = '2025-07-26';
@@ -250,16 +251,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const availableStock = getAvailableStock(productId);
     
     if (availableStock === 0) {
-      return "Out of Stock for this batch (July 26-29, 2025)";
+      return "Out of Stock for this batch";
     }
     
     if (requestedQuantity > availableStock) {
-      if (productId === 'dudhi') {
-        return `Only ${availableStock} pieces available for this batch`;
-      } else {
-        const availableKg = (availableStock * 0.5).toFixed(1);
-        return `Only ${availableKg}kg (${availableStock} units) available for this batch`;
-      }
+      return `Only ${availableStock}kg available for this batch`;
     }
     
     return "";
