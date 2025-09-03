@@ -25,22 +25,70 @@ const Cart = () => {
   };
 
   // Restore proper payment functionality
-  const handleProceedToPayment = () => {
+  const handleProceedToPayment = async () => {
     if (!customerDetails.name.trim() || !customerDetails.phone.trim() || !customerDetails.address.trim()) {
       toast.error("Please fill in all delivery details");
       return;
     }
 
-    // Store checkout data in sessionStorage for the checkout page
-    const checkoutData = {
-      items: state.items,
-      total: state.total,
-      customerDetails: customerDetails
-    };
-    sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+    setIsSubmitting(true);
 
-    // Navigate to checkout page
-    navigate('/checkout');
+    try {
+      // Create RESERVED status orders for each product immediately
+      const reservationPromises = state.items.map(async (item) => {
+        const orderId = crypto.randomUUID();
+        const orderData = {
+          id: orderId,
+          product_id: item.id,
+          product_name: item.name,
+          customer_name: customerDetails.name,
+          customer_phone: customerDetails.phone,
+          customer_address: customerDetails.address,
+          quantity: item.quantity,
+          weight_kg: item.quantity,
+          total_price: item.price * item.quantity,
+          order_date: new Date().toISOString().split('T')[0],
+          status: 'reserved', // Status: RESERVED (not confirmed yet)
+          transaction_id: null, // No transaction ID yet
+          payment_screenshot_path: null // No screenshot yet
+        };
+
+        console.log(`Creating RESERVED order for ${item.name}:`, orderData);
+        return supabase.from('order_slots').insert(orderData).select();
+      });
+
+      // Insert all reservation records
+      const reservationResults = await Promise.all(reservationPromises);
+      
+      // Check for any errors
+      const errors = reservationResults.filter(result => result.error);
+      if (errors.length > 0) {
+        console.error('Some reservations failed to create:', errors);
+        throw new Error(`Failed to create ${errors.length} reservations`);
+      }
+
+      console.log('All reservations created successfully:', reservationResults.map(r => r.data));
+
+      // Store checkout data in sessionStorage for the checkout page
+      const checkoutData = {
+        items: state.items,
+        total: state.total,
+        customerDetails: customerDetails,
+        reservationIds: reservationResults.map(r => r.data?.[0]?.id).filter(Boolean) // Store reservation IDs
+      };
+      sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
+
+      toast.success('Products reserved! Proceeding to payment...');
+
+      // Navigate to checkout page
+      navigate('/checkout');
+
+    } catch (error) {
+      console.error('Error creating reservations:', error);
+      toast.error('Failed to reserve products. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

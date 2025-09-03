@@ -20,6 +20,7 @@ interface CheckoutData {
     phone: string;
     address: string;
   };
+  reservationIds?: string[]; // Added for existing reservations
 }
 
 const Checkout = () => {
@@ -98,40 +99,69 @@ const Checkout = () => {
 
       console.log('File uploaded successfully:', uploadData);
 
-      // Create separate order records for each product instead of one mixed record
-      const orderPromises = effectiveCheckoutData.items.map(async (item) => {
-        const orderId = uuidv4();
-        const orderData = {
-          id: orderId,
-          product_id: item.id,
-          product_name: item.name,
-          customer_name: effectiveCheckoutData.customerDetails?.name || '',
-          customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
-          customer_address: effectiveCheckoutData.customerDetails?.address || '',
-          quantity: item.quantity,
-          weight_kg: item.quantity, // Since all items are in kg
-          total_price: item.price * item.quantity,
-          order_date: new Date().toISOString().split('T')[0],
-          status: 'confirmed',
-          transaction_id: transactionId,
-          payment_screenshot_path: fileName
-        };
+      // Update existing RESERVED orders to CONFIRMED status
+      if (effectiveCheckoutData.reservationIds && effectiveCheckoutData.reservationIds.length > 0) {
+        console.log('Updating existing RESERVED orders to CONFIRMED...');
+        
+        const updatePromises = effectiveCheckoutData.reservationIds.map(async (reservationId) => {
+          const updateData = {
+            status: 'confirmed',
+            transaction_id: transactionId,
+            payment_screenshot_path: fileName
+          };
 
-        console.log(`Creating order for ${item.name}:`, orderData);
-        return supabase.from('order_slots').insert(orderData).select();
-      });
+          console.log(`Updating reservation ${reservationId} to confirmed:`, updateData);
+          return supabase
+            .from('order_slots')
+            .update(updateData)
+            .eq('id', reservationId)
+            .select();
+        });
 
-      // Insert all order records
-      const orderResults = await Promise.all(orderPromises);
-      
-      // Check for any errors
-      const errors = orderResults.filter(result => result.error);
-      if (errors.length > 0) {
-        console.error('Some orders failed to insert:', errors);
-        throw new Error(`Failed to insert ${errors.length} orders`);
+        // Update all reservation records
+        const updateResults = await Promise.all(updatePromises);
+        
+        // Check for any errors
+        const errors = updateResults.filter(result => result.error);
+        if (errors.length > 0) {
+          console.error('Some orders failed to update:', errors);
+          throw new Error(`Failed to update ${errors.length} orders`);
+        }
+
+        console.log('All orders updated successfully:', updateResults.map(r => r.data));
+      } else {
+        // Fallback: Create new orders if no reservation IDs (shouldn't happen in normal flow)
+        console.warn('No reservation IDs found, creating new orders as fallback...');
+        
+        const orderPromises = effectiveCheckoutData.items.map(async (item) => {
+          const orderId = uuidv4();
+          const orderData = {
+            id: orderId,
+            product_id: item.id,
+            product_name: item.name,
+            customer_name: effectiveCheckoutData.customerDetails?.name || '',
+            customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
+            customer_address: effectiveCheckoutData.customerDetails?.address || '',
+            quantity: item.quantity,
+            weight_kg: item.quantity,
+            total_price: item.price * item.quantity,
+            order_date: new Date().toISOString().split('T')[0],
+            status: 'confirmed',
+            transaction_id: transactionId,
+            payment_screenshot_path: fileName
+          };
+
+          console.log(`Creating fallback order for ${item.name}:`, orderData);
+          return supabase.from('order_slots').insert(orderData).select();
+        });
+
+        const orderResults = await Promise.all(orderPromises);
+        const errors = orderResults.filter(result => result.error);
+        if (errors.length > 0) {
+          console.error('Some fallback orders failed to insert:', errors);
+          throw new Error(`Failed to insert ${errors.length} fallback orders`);
+        }
       }
-
-      console.log('All orders inserted successfully:', orderResults.map(r => r.data));
 
       // Clear cart and show success
       clearCart();
