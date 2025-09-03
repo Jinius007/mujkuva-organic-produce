@@ -62,9 +62,65 @@ const Checkout = () => {
     }
   };
 
-  // Orders closed for this slot
-  const handleOrderSubmit = () => {
-    toast.error('Orders closed for this slot');
+  // Restore proper payment functionality
+  const handleOrderSubmit = async () => {
+    if (!transactionId.trim()) {
+      toast.error('Please enter a transaction ID');
+      return;
+    }
+
+    if (!selectedFile) {
+      toast.error('Please upload a payment screenshot');
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      // Upload payment screenshot
+      const fileName = `payment_${Date.now()}_${selectedFile.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('payment-screenshots')
+        .upload(fileName, selectedFile);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Create order record
+      const orderId = uuidv4();
+      const { error: orderError } = await supabase
+        .from('orders')
+        .insert({
+          id: orderId,
+          items: effectiveCheckoutData.items,
+          total: effectiveCheckoutData.total,
+          transaction_id: transactionId,
+          payment_screenshot: fileName,
+          status: 'confirmed',
+          created_at: new Date().toISOString()
+        });
+
+      if (orderError) {
+        throw orderError;
+      }
+
+      // Clear cart and show success
+      clearCart();
+      setIsOrderComplete(true);
+      toast.success('Order placed successfully!');
+
+      // Redirect to order confirmation
+      setTimeout(() => {
+        navigate('/order-confirmation');
+      }, 2000);
+
+    } catch (error) {
+      console.error('Error placing order:', error);
+      toast.error('Failed to place order. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   // Always show checkout/payment UI for local testing (even if no checkoutData)
@@ -101,14 +157,7 @@ const Checkout = () => {
                 >
                   Copy UPI ID
                 </button>
-                <button
-                  className="btn-primary flex items-center gap-2 opacity-60 cursor-not-allowed"
-                  style={{ width: 'fit-content' }}
-                  onClick={handleOrderSubmit}
-                  disabled
-                >
-                  Orders closed for this slot
-                </button>
+
                 <button
                   className="btn-primary"
                   style={{ width: 'fit-content' }}
