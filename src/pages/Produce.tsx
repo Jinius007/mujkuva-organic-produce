@@ -48,8 +48,8 @@ const products: Product[] = [
   },
   {
     id: "galki",
-    name: "Galki (Ridge Gourd)",
-    description: "Fresh organic ridge gourd, healthy and versatile. Great for curries and soups.",
+    name: "Galki (Sponge Gourd)",
+    description: "Fresh organic sponge gourd, healthy and versatile. Great for curries and soups.",
     price: 40,
     unit: "kg",
     image: "/lovable-uploads/sponge gourd.PNG",
@@ -64,7 +64,7 @@ const Produce = () => {
   
   // Restore ordering functionality
   const handleOrderNow = (productId: string) => {
-    navigate(`/product/${productId}`);
+    navigate(`/produce/${productId}`);
   };
 
   const filteredProducts = products.filter(product => {

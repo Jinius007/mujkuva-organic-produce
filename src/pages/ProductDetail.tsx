@@ -26,8 +26,8 @@ const productsData: Record<string, Product> = {
     name: "Little Gourd (Tindora)",
     description: "Farm fresh, organically grown little gourd with exceptional taste and nutritional value.",
     detailedDescription: "Our little gourd is grown using organic farming practices, free from synthetic pesticides and fertilizers. Each piece is harvested at the perfect stage of ripeness to ensure optimal flavor and nutritional content. Little gourd is known for its distinctive taste and numerous health benefits.",
-    price: 50,
-    unit: "500g",
+    price: 80,
+    unit: "kg",
     image: "/lovable-uploads/faf0beb0-6926-4c2d-a405-283f9c98c26b.png",
     nutritionalInfo: [
       "Rich in vitamins A and C",
@@ -42,45 +42,66 @@ const productsData: Record<string, Product> = {
       "Contributes to heart health"
     ]
   },
-  "bhindi": {
-    id: "bhindi",
-    name: "Bhindi (Okra)",
-    description: "Fresh organic bhindi, crispy and nutritious. Perfect for healthy cooking.",
-    detailedDescription: "Our organic bhindi is grown without synthetic pesticides or fertilizers, ensuring the highest quality and taste. Rich in nutrients and with a unique texture, bhindi is perfect for curries, fries, and various regional dishes. Each piece is carefully selected for optimal freshness.",
+  "bajra": {
+    id: "bajra",
+    name: "Bajra (Pearl Millet)",
+    description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking.",
+    detailedDescription: "Our organic bajra is grown without synthetic pesticides or fertilizers, ensuring the highest quality and taste. Rich in nutrients and with a unique texture, bajra is perfect for various traditional dishes and provides numerous health benefits.",
     price: 40,
-    unit: "500g",
-    image: "/lovable-uploads/e19656d6-a849-47ba-8795-7c1f88dd326d.png",
+    unit: "kg",
+    image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
     nutritionalInfo: [
       "High in dietary fiber",
-      "Rich in vitamins C and K",
-      "Contains folate and antioxidants",
-      "Good source of magnesium and potassium"
+      "Rich in B vitamins",
+      "Contains essential minerals like iron and magnesium",
+      "Good source of protein"
     ],
     benefits: [
       "Supports digestive health",
       "May help control blood sugar",
       "Promotes heart health",
-      "Boosts immune function"
+      "Boosts energy levels"
     ]
   },
-  "dudhi": {
-    id: "dudhi",
-    name: "Dudhi (Bottle Gourd)",
-    description: "Fresh organic bottle gourd, healthy and versatile. Great for curries and soups.",
-    detailedDescription: "Our organic bottle gourd is cultivated using traditional farming methods without any chemical inputs. Known for its mild flavor and high water content, dudhi is excellent for various dishes and provides numerous health benefits. It's particularly popular in Indian cuisine.",
+  "banana": {
+    id: "banana",
+    name: "Banana",
+    description: "Fresh organic green bananas, naturally grown and packed with essential nutrients.",
+    detailedDescription: "Our organic green bananas are cultivated using traditional farming methods without any chemical inputs. Known for their nutritional value and versatility, these bananas are perfect for cooking and provide numerous health benefits.",
     price: 40,
-    unit: "per piece",
-    image: "/lovable-uploads/0124ffce-e145-407b-9ca8-dd9fcb4b700c.png",
+    unit: "kg",
+    image: "/lovable-uploads/WhatsApp Image 2025-09-03 at 09.34.58.jpeg",
     nutritionalInfo: [
-      "High water content (96%)",
-      "Rich in vitamins B and C",
-      "Contains calcium and iron",
+      "Rich in potassium",
+      "Good source of vitamins B6 and C",
+      "Contains dietary fiber",
       "Low in calories and fat"
+    ],
+    benefits: [
+      "Supports heart health",
+      "Aids in digestion",
+      "Boosts energy levels",
+      "Promotes healthy skin"
+    ]
+  },
+  "galki": {
+    id: "galki",
+    name: "Galki (Sponge Gourd)",
+    description: "Fresh organic sponge gourd, healthy and versatile. Great for curries and soups.",
+    detailedDescription: "Our organic sponge gourd is grown using organic farming practices, free from synthetic pesticides and fertilizers. Known for its mild flavor and high nutritional content, galki is excellent for various dishes and provides numerous health benefits.",
+    price: 40,
+    unit: "kg",
+    image: "/lovable-uploads/sponge gourd.PNG",
+    nutritionalInfo: [
+      "High water content",
+      "Rich in vitamins A and C",
+      "Contains calcium and iron",
+      "Low in calories and carbohydrates"
     ],
     benefits: [
       "Helps with hydration",
       "Aids in weight management",
-      "Supports kidney function",
+      "Supports immune function",
       "Promotes healthy digestion"
     ]
   }
