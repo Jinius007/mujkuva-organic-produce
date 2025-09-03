@@ -89,12 +89,7 @@ const productsData: Record<string, Product> = {
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  // Orders closed for this slot
-  const addToCart = () => {
-    toast.error("Orders closed for this slot");
-  };
   const [quantity, setQuantity] = useState(1);
-  const [stockMessage, setStockMessage] = useState("");
   
   // Get product details
   const product = productId ? productsData[productId] : null;
@@ -113,57 +108,15 @@ const ProductDetail = () => {
       </div>
     );
   }
-  // REMOVE BLOCK ALL ORDERING: Always show product details and enable ordering
-  // (No-op: main return is below)
   
-  const totalPrice = product.price * quantity;
-  
-  // Refresh stock data on component mount
-  useEffect(() => {
-    refreshStockData();
-  }, [refreshStockData]);
-
-  // Calculate available stock for real products
-  const availableStock = getAvailableStock(product.id);
-  const isOutOfStock = availableStock === 0;
-  
-  // Update stock message when quantity changes
-  useEffect(() => {
-    const message = getStockMessage(product.id, quantity);
-    setStockMessage(message);
-  }, [quantity, product.id, getStockMessage]);
-
   // Handle add to cart
   const handleAddToCart = () => {
-    if (isOutOfStock) {
-      toast.error("This product is out of stock for the current batch");
-      return;
-    }
-    
-    if (!isStockAvailable(product.id, quantity)) {
-      toast.error(getStockMessage(product.id, quantity));
-      return;
-    }
-    
-    const success = addToCart(product, quantity);
-    if (success) {
-      if (product.id === 'dudhi') {
-        toast.success(`Added ${quantity} pieces to cart`);
-      } else {
-        toast.success(`Added ${quantity} units (${(quantity * 0.5).toFixed(1)}kg) to cart`);
-      }
-      setQuantity(1); // Reset quantity
-    } else {
-      toast.error("Could not add to cart. Please check stock availability.");
-    }
+    toast.error("Orders closed for this slot");
   };
   
   // Handle quantity changes
   const incrementQuantity = () => {
-    const newQuantity = quantity + 1;
-    if (isStockAvailable(product.id, newQuantity)) {
-      setQuantity(newQuantity);
-    }
+    setQuantity(prev => prev + 1);
   };
   
   const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
@@ -212,15 +165,43 @@ const ProductDetail = () => {
               ₹{product.price} per {product.unit}
             </div>
             
-            {/* Stock Information */}
-            return (
-              <div className="page-transition pt-24">
-                <div className="container mx-auto px-4 py-12">
-                  <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
-                    <h1 className="text-2xl font-bold mb-6 text-organic-800">Orders closed for this slot</h1>
-                    <p className="mb-2 text-gray-700">Ordering is currently unavailable. Please check back later.</p>
-                  </div>
-                </div>
+            <p className="text-gray-700 mb-6">
+              {product.detailedDescription}
+            </p>
+            
+            {/* Quantity Selector */}
+            <div className="mb-6">
+              <label className="block text-gray-700 mb-2">Quantity:</label>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={decrementQuantity}
+                  disabled={quantity <= 1}
+                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
+                >
+                  -
+                </button>
+                <span className="text-lg font-semibold w-12 text-center">{quantity}</span>
+                <button
+                  onClick={incrementQuantity}
+                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50"
+                >
+                  +
+                </button>
               </div>
-            );
-              )}
+            </div>
+            
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAddToCart}
+              className="w-full bg-organic-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-organic-700 transition-colors"
+            >
+              Orders closed for this slot
+            </button>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductDetail;
