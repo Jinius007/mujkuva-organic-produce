@@ -103,7 +103,7 @@ const Checkout = () => {
       console.log('Attempting to upload file:', fileName);
       
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('payment_screenshots')
+        .from('new_payment_proofs')
         .upload(fileName, selectedFile);
 
       if (uploadError) {

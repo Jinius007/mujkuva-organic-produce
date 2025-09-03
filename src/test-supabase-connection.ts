@@ -71,9 +71,9 @@ export async function testSupabaseConnection() {
       console.error('❌ Direct bucket access exception:', directError);
     }
     
-    const paymentBucket = buckets.find(b => b.id === 'payment_screenshots');
+    const paymentBucket = buckets.find(b => b.id === 'new_payment_proofs');
     if (!paymentBucket) {
-      console.error('❌ payment_screenshots bucket not found in list');
+      console.error('❌ new_payment_proofs bucket not found in list');
       console.error('   - Bucket exists in Supabase but website cannot see it');
       console.error('   - This suggests a storage permissions issue');
       console.error('   - Possible causes:');
@@ -84,7 +84,7 @@ export async function testSupabaseConnection() {
     }
     
     console.log('✅ Storage bucket access successful');
-    console.log('   - payment_screenshots bucket found');
+    console.log('   - new_payment_proofs bucket found');
     console.log('   - Bucket public:', paymentBucket.public);
     
     // Test 3: Test file upload capability
@@ -93,7 +93,7 @@ export async function testSupabaseConnection() {
     const testFileName = `test_${Date.now()}.txt`;
     
     const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('payment_screenshots')
+      .from('new_payment_proofs')
       .upload(testFileName, testBlob);
     
     if (uploadError) {
@@ -139,7 +139,7 @@ export async function testSupabaseConnection() {
     
     // Clean up test data
     console.log('5. Cleaning up test data...');
-    await supabase.storage.from('payment_screenshots').remove([testFileName]);
+    await supabase.storage.from('new_payment_proofs').remove([testFileName]);
     await supabase.from('order_slots').delete().eq('id', insertData[0].id);
     console.log('✅ Test data cleaned up');
     
