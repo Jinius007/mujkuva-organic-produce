@@ -16,6 +16,7 @@ interface Product {
   category: string;
 }
 
+// Force push commit - ensure GitHub sync
 // Updated produce list - removed bhindi/dudhi, added bajra/banana/galki
 const products: Product[] = [
   {
