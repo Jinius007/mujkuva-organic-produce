@@ -34,7 +34,7 @@ const products: Product[] = [
     description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking.",
     price: 40,
     unit: "kg",
-    image: "/lovable-uploads/ba79b90b-bbdf-419c-b53f-691ef85173c4.png",
+    image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
     category: "Grains"
   },
   {
@@ -43,7 +43,7 @@ const products: Product[] = [
     description: "Fresh organic green bananas, naturally grown and packed with essential nutrients.",
     price: 40,
     unit: "kg",
-    image: "/lovable-uploads/23941a2e-e600-4a24-bd5e-5f435b868c8a.png",
+    image: "/lovable-uploads/WhatsApp Image 2025-09-03 at 09.34.58.jpeg",
     category: "Fruits"
   },
   {
@@ -52,7 +52,7 @@ const products: Product[] = [
     description: "Fresh organic ridge gourd, healthy and versatile. Great for curries and soups.",
     price: 40,
     unit: "kg",
-    image: "/lovable-uploads/bhindi.png",
+    image: "/lovable-uploads/sponge gourd.PNG",
     category: "Gourds"
   }
 ];
@@ -61,9 +61,10 @@ const Produce = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
-  // Orders closed for this slot
-  const handleOrderNow = () => {
-    toast.error("Orders closed for this slot");
+  
+  // Restore ordering functionality
+  const handleOrderNow = (productId: string) => {
+    navigate(`/product/${productId}`);
   };
 
   const filteredProducts = products.filter(product => {
@@ -143,7 +144,7 @@ const Produce = () => {
                       </p>
                       <button
                         type="button"
-                        onClick={handleOrderNow}
+                        onClick={() => handleOrderNow(product.id)}
                         className="flex items-center text-organic-600 font-medium hover:text-organic-700 transition-colors w-full justify-center py-2 rounded bg-green-100 text-green-800 font-semibold"
                       >
                         <span>Order Now</span>

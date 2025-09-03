@@ -111,7 +111,9 @@ const ProductDetail = () => {
   
   // Handle add to cart
   const handleAddToCart = () => {
-    toast.error("Orders closed for this slot");
+    // Restore ordering functionality
+    toast.success(`Added ${quantity} units to cart`);
+    // Here you can add the actual cart logic when ready
   };
   
   // Handle quantity changes
@@ -195,7 +197,7 @@ const ProductDetail = () => {
               onClick={handleAddToCart}
               className="w-full bg-organic-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-organic-700 transition-colors"
             >
-              Orders closed for this slot
+              Add to Cart
             </button>
           </motion.div>
         </div>
