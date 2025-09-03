@@ -6,7 +6,6 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import { useCart } from "@/contexts/CartContext";
-import testSupabaseConnection from "@/test-supabase-connection";
 
 interface CheckoutData {
   items: Array<{
@@ -45,20 +44,6 @@ const Checkout = () => {
         setCheckoutData(null);
       }
     }
-  }, []);
-
-  // Test Supabase connection on component mount
-  useEffect(() => {
-    const runConnectionTest = async () => {
-      console.log('🔍 Running Supabase connection test on component mount...');
-      const result = await testSupabaseConnection();
-      if (!result) {
-        console.error('❌ Supabase connection test failed - orders may not work!');
-        toast.error('Warning: Database connection test failed');
-      }
-    };
-
-    runConnectionTest();
   }, []);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -204,16 +189,6 @@ const Checkout = () => {
     return null;
   }
 
-  const handleManualTest = async () => {
-    console.log('🧪 Running Supabase connection test manually...');
-    const result = await testSupabaseConnection();
-    if (result) {
-      toast.success('Supabase connection test successful!');
-    } else {
-      toast.error('Supabase connection test failed. Orders may not work.');
-    }
-  };
-
   return (
     <div className="page-transition pt-24">
       <div className="container mx-auto px-4 py-12">
@@ -222,13 +197,6 @@ const Checkout = () => {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Complete Your Payment</h1>
             <p className="text-gray-600">Complete your order with payment</p>
             
-            {/* Manual test button for debugging */}
-            <button
-              onClick={handleManualTest}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-            >
-              🧪 Test Supabase Connection
-            </button>
           </div>
           
           <div className="mb-6">
