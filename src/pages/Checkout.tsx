@@ -80,25 +80,35 @@ const Checkout = () => {
       // Upload payment screenshot
       const fileName = `payment_${Date.now()}_${selectedFile.name}`;
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('payment-screenshots')
+        .from('payment_screenshots')
         .upload(fileName, selectedFile);
 
       if (uploadError) {
         throw uploadError;
       }
 
-      // Create order record
+      // Create order record in order_slots table
       const orderId = uuidv4();
       const { error: orderError } = await supabase
-        .from('orders')
+        .from('order_slots')
         .insert({
           id: orderId,
-          items: effectiveCheckoutData.items,
-          total: effectiveCheckoutData.total,
-          transaction_id: transactionId,
-          payment_screenshot: fileName,
+          product_id: effectiveCheckoutData.items[0]?.id || 'mixed',
+          product_name: effectiveCheckoutData.items.length === 1 
+            ? effectiveCheckoutData.items[0].name 
+            : 'Mixed Products',
+          customer_name: effectiveCheckoutData.customerDetails?.name || '',
+          customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
+          customer_address: effectiveCheckoutData.customerDetails?.address || '',
+          quantity: effectiveCheckoutData.items.reduce((sum, item) => sum + item.quantity, 0),
+          weight_kg: effectiveCheckoutData.items.reduce((sum, item) => sum + item.quantity, 0), // Since all items are now in kg
+          total_price: effectiveCheckoutData.total,
+          order_date: new Date().toISOString().split('T')[0], // Today's date
           status: 'confirmed',
-          created_at: new Date().toISOString()
+          transaction_id: transactionId,
+          payment_screenshot_path: fileName,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         });
 
       if (orderError) {
