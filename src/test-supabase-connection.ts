@@ -51,6 +51,63 @@ export async function testSupabaseConnection() {
     }
     console.log('✅ Table schema test successful');
     
+    // Test 4: Test file upload (small test file)
+    console.log('4. Testing file upload capability...');
+    const testBlob = new Blob(['test content'], { type: 'text/plain' });
+    const testFileName = `test_${Date.now()}.txt`;
+    
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('payment_screenshots')
+      .upload(testFileName, testBlob);
+    
+    if (uploadError) {
+      console.error('❌ File upload test failed:', uploadError);
+      console.error('   - Error message:', uploadError.message);
+      console.error('   - Error details:', uploadError);
+      return false;
+    }
+    
+    console.log('✅ File upload test successful:', uploadData);
+    
+    // Test 5: Test database insert
+    console.log('5. Testing database insert capability...');
+    const testOrderData = {
+      product_id: 'test',
+      product_name: 'Test Product',
+      customer_name: 'Test Customer',
+      customer_phone: '1234567890',
+      customer_address: 'Test Address',
+      quantity: 1,
+      weight_kg: 1.0,
+      total_price: 100.0,
+      order_date: new Date().toISOString().split('T')[0],
+      status: 'test',
+      transaction_id: 'test_transaction',
+      payment_screenshot_path: testFileName
+    };
+    
+    const { data: insertData, error: insertError } = await supabase
+      .from('order_slots')
+      .insert(testOrderData)
+      .select();
+    
+    if (insertError) {
+      console.error('❌ Database insert test failed:', insertError);
+      console.error('   - Error code:', insertError.code);
+      console.error('   - Error message:', insertError.message);
+      console.error('   - Error details:', insertError);
+      console.error('   - Error hint:', insertError.hint);
+      return false;
+    }
+    
+    console.log('✅ Database insert test successful:', insertData);
+    
+    // Clean up test data
+    console.log('6. Cleaning up test data...');
+    await supabase.storage.from('payment_screenshots').remove([testFileName]);
+    await supabase.from('order_slots').delete().eq('id', insertData[0].id);
+    console.log('✅ Test data cleaned up');
+    
     console.log('🎉 All Supabase tests passed!');
     return true;
     
