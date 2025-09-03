@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
 import { useCart } from "@/contexts/CartContext";
+import testSupabaseConnection from "@/test-supabase-connection";
 
 interface CheckoutData {
   items: Array<{
@@ -44,6 +45,20 @@ const Checkout = () => {
         setCheckoutData(null);
       }
     }
+  }, []);
+
+  // Test Supabase connection on component mount
+  useEffect(() => {
+    const runConnectionTest = async () => {
+      console.log('🔍 Running Supabase connection test on component mount...');
+      const result = await testSupabaseConnection();
+      if (!result) {
+        console.error('❌ Supabase connection test failed - orders may not work!');
+        toast.error('Warning: Database connection test failed');
+      }
+    };
+
+    runConnectionTest();
   }, []);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {

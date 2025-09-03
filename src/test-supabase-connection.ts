@@ -1,61 +1,64 @@
+// Test Supabase connection and table access
 import { supabase } from './integrations/supabase/client';
 
 export async function testSupabaseConnection() {
-  console.log('Testing Supabase connection...');
+  console.log('🧪 Testing Supabase connection...');
   
   try {
-    // Test 1: Basic connection test
+    // Test 1: Basic connection
     console.log('1. Testing basic connection...');
-    const { data, error } = await supabase
-      .from('order_slots')
-      .select('count')
-      .limit(1);
-    
-    if (error) {
-      console.error('❌ Connection failed:', error);
-      return false;
-    }
-    
-    console.log('✅ Basic connection successful');
-    
-    // Test 2: Test storage bucket access
-    console.log('2. Testing storage bucket access...');
-    const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
-    
-    if (bucketError) {
-      console.error('❌ Storage access failed:', bucketError);
-    } else {
-      console.log('✅ Storage access successful');
-      console.log('Available buckets:', buckets?.map(b => b.name));
-    }
-    
-    // Test 3: Test table structure
-    console.log('3. Testing table structure...');
-    const { data: tableData, error: tableError } = await supabase
+    const { data: testData, error: testError } = await supabase
       .from('order_slots')
       .select('*')
       .limit(1);
     
-    if (tableError) {
-      console.error('❌ Table access failed:', tableError);
+    if (testError) {
+      console.error('❌ Basic connection failed:', testError);
+      return false;
+    }
+    console.log('✅ Basic connection successful');
+    
+    // Test 2: Storage bucket access
+    console.log('2. Testing storage bucket access...');
+    const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
+    
+    if (bucketError) {
+      console.error('❌ Storage bucket access failed:', bucketError);
       return false;
     }
     
-    console.log('✅ Table access successful');
-    console.log('Table structure sample:', tableData);
+    const paymentBucket = buckets.find(b => b.id === 'payment_screenshots');
+    if (!paymentBucket) {
+      console.error('❌ payment_screenshots bucket not found');
+      return false;
+    }
     
-    console.log('🎉 All Supabase connection tests passed!');
+    console.log('✅ Storage bucket access successful');
+    console.log('   - payment_screenshots bucket found');
+    console.log('   - Bucket public:', paymentBucket.public);
+    console.log('   - File size limit:', paymentBucket.file_size_limit);
+    
+    // Test 3: Table schema
+    console.log('3. Testing table schema...');
+    const { data: schemaData, error: schemaError } = await supabase
+      .from('order_slots')
+      .select('*')
+      .limit(0);
+    
+    if (schemaError) {
+      console.error('❌ Table schema test failed:', schemaError);
+      return false;
+    }
+    console.log('✅ Table schema test successful');
+    
+    console.log('🎉 All Supabase tests passed!');
     return true;
     
   } catch (error) {
-    console.error('❌ Connection test failed:', error);
+    console.error('❌ Supabase test failed with exception:', error);
     return false;
   }
 }
 
-// Run the test if this file is executed directly
-if (typeof window !== 'undefined') {
-  // Browser environment
-  (window as any).testSupabaseConnection = testSupabaseConnection;
-  console.log('Supabase connection test available at window.testSupabaseConnection()');
-} 
+// Export for use in components
+export default testSupabaseConnection; 
