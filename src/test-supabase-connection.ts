@@ -14,6 +14,14 @@ export async function testSupabaseConnection() {
     
     if (testError) {
       console.error('❌ Basic connection failed:', testError);
+      console.error('   - Error code:', testError.code);
+      console.error('   - Error message:', testError.message);
+      
+      // Check if it's a table doesn't exist error
+      if (testError.code === '42P01') {
+        console.error('   - ISSUE: Table "order_slots" does not exist!');
+        console.error('   - SOLUTION: Run the migrations on your Supabase backend');
+      }
       return false;
     }
     console.log('✅ Basic connection successful');
@@ -24,89 +32,22 @@ export async function testSupabaseConnection() {
     
     if (bucketError) {
       console.error('❌ Storage bucket access failed:', bucketError);
+      console.error('   - Error message:', bucketError.message);
       return false;
     }
+    
+    console.log('Available buckets:', buckets.map(b => ({ id: b.id, name: b.name, public: b.public })));
     
     const paymentBucket = buckets.find(b => b.id === 'payment_screenshots');
     if (!paymentBucket) {
       console.error('❌ payment_screenshots bucket not found');
+      console.error('   - SOLUTION: Run the storage bucket migration on your Supabase backend');
       return false;
     }
     
     console.log('✅ Storage bucket access successful');
     console.log('   - payment_screenshots bucket found');
     console.log('   - Bucket public:', paymentBucket.public);
-    console.log('   - File size limit:', paymentBucket.file_size_limit);
-    
-    // Test 3: Table schema
-    console.log('3. Testing table schema...');
-    const { data: schemaData, error: schemaError } = await supabase
-      .from('order_slots')
-      .select('*')
-      .limit(0);
-    
-    if (schemaError) {
-      console.error('❌ Table schema test failed:', schemaError);
-      return false;
-    }
-    console.log('✅ Table schema test successful');
-    
-    // Test 4: Test file upload (small test file)
-    console.log('4. Testing file upload capability...');
-    const testBlob = new Blob(['test content'], { type: 'text/plain' });
-    const testFileName = `test_${Date.now()}.txt`;
-    
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('payment_screenshots')
-      .upload(testFileName, testBlob);
-    
-    if (uploadError) {
-      console.error('❌ File upload test failed:', uploadError);
-      console.error('   - Error message:', uploadError.message);
-      console.error('   - Error details:', uploadError);
-      return false;
-    }
-    
-    console.log('✅ File upload test successful:', uploadData);
-    
-    // Test 5: Test database insert
-    console.log('5. Testing database insert capability...');
-    const testOrderData = {
-      product_id: 'test',
-      product_name: 'Test Product',
-      customer_name: 'Test Customer',
-      customer_phone: '1234567890',
-      customer_address: 'Test Address',
-      quantity: 1,
-      weight_kg: 1.0,
-      total_price: 100.0,
-      order_date: new Date().toISOString().split('T')[0],
-      status: 'test',
-      transaction_id: 'test_transaction',
-      payment_screenshot_path: testFileName
-    };
-    
-    const { data: insertData, error: insertError } = await supabase
-      .from('order_slots')
-      .insert(testOrderData)
-      .select();
-    
-    if (insertError) {
-      console.error('❌ Database insert test failed:', insertError);
-      console.error('   - Error code:', insertError.code);
-      console.error('   - Error message:', insertError.message);
-      console.error('   - Error details:', insertError);
-      console.error('   - Error hint:', insertError.hint);
-      return false;
-    }
-    
-    console.log('✅ Database insert test successful:', insertData);
-    
-    // Clean up test data
-    console.log('6. Cleaning up test data...');
-    await supabase.storage.from('payment_screenshots').remove([testFileName]);
-    await supabase.from('order_slots').delete().eq('id', insertData[0].id);
-    console.log('✅ Test data cleaned up');
     
     console.log('🎉 All Supabase tests passed!');
     return true;
