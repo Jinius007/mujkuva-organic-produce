@@ -50,7 +50,7 @@ const products: Product[] = [
     id: "galki",
     name: "Galki (Sponge Gourd)",
     description: "Fresh organic sponge gourd, healthy and versatile. Great for curries and soups.",
-    price: 40,
+    price: 50,
     unit: "kg",
     image: "/lovable-uploads/sponge gourd.PNG",
     category: "Gourds"

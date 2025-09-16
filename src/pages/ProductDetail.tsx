@@ -89,7 +89,7 @@ const productsData: Record<string, Product> = {
     name: "Galki (Sponge Gourd)",
     description: "Fresh organic sponge gourd, healthy and versatile. Great for curries and soups.",
     detailedDescription: "Our organic sponge gourd is grown using organic farming practices, free from synthetic pesticides and fertilizers. Known for its mild flavor and high nutritional content, galki is excellent for various dishes and provides numerous health benefits.",
-    price: 40,
+    price: 50,
     unit: "kg",
     image: "/lovable-uploads/sponge gourd.PNG",
     nutritionalInfo: [
