@@ -110,7 +110,7 @@ const productsData: Record<string, Product> = {
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(0.5);
   const { addToCart } = useCart();
   
   // Get product details
@@ -164,7 +164,7 @@ const ProductDetail = () => {
      
           if (success) {
        toast.success(`Added ${quantity}kg of ${product.name} to cart`);
-       setQuantity(1); // Reset quantity
+       setQuantity(0.5); // Reset quantity
      } else {
        toast.error("Could not add to cart. Please check stock availability.");
      }
@@ -172,10 +172,10 @@ const ProductDetail = () => {
   
   // Handle quantity changes
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
+    setQuantity(prev => prev + 0.5);
   };
   
-  const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  const decrementQuantity = () => setQuantity(prev => (prev > 0.5 ? prev - 0.5 : 0.5));
 
   return (
     <div className="page-transition pt-24">
@@ -231,7 +231,7 @@ const ProductDetail = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={decrementQuantity}
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 0.5}
                   className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
                 >
                   -

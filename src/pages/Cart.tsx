@@ -17,7 +17,7 @@ const Cart = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
+    if (newQuantity < 0.5) {
       removeFromCart(id);
     } else {
       updateQuantity(id, newQuantity);
@@ -148,14 +148,14 @@ const Cart = () => {
                         </div>
                         <div className="flex items-center space-x-3">
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity - 0.5)}
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
                           >
                             <Minus size={16} />
                           </button>
                           <span className="w-8 text-center font-medium">{item.quantity}</span>
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity + 0.5)}
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
                           >
                             <Plus size={16} />
