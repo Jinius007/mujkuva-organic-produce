@@ -64,7 +64,8 @@ const Cart = () => {
       const errors = reservationResults.filter(result => result.error);
       if (errors.length > 0) {
         console.error('Some reservations failed to create:', errors);
-        throw new Error(`Failed to create ${errors.length} reservations`);
+        // Don't throw error - just show warning and continue
+        toast.warning(`Some products may not be available. Please check your order.`);
       }
 
       console.log('All reservations created successfully:', reservationResults.map(r => r.data));

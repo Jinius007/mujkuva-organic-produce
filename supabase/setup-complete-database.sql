@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS public.order_slots (
   weight_kg NUMERIC NOT NULL, -- total weight in kg
   total_price NUMERIC NOT NULL,
   order_date DATE NOT NULL, -- the date slot this order is for
-  status TEXT NOT NULL DEFAULT 'pending', -- pending, confirmed, completed
+  status TEXT NOT NULL DEFAULT 'pending', -- pending, reserved, confirmed, completed
   transaction_id TEXT,
   payment_screenshot_path TEXT,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),

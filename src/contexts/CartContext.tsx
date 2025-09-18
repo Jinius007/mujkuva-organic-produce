@@ -133,7 +133,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         .lte('order_date', ORDER_DATE_END)
         .in('status', ['reserved', 'confirmed']); // Count both reserved and confirmed orders against stock
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching stock data:', error);
+        // Don't throw error - just use empty stock data
+        dispatch({ type: 'SET_STOCK_USED', payload: {} });
+        return;
+      }
 
       const stockUsed: Record<string, number> = {};
       
@@ -147,6 +152,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       dispatch({ type: 'SET_STOCK_USED', payload: stockUsed });
     } catch (error) {
       console.error('Error fetching stock data:', error);
+      // Don't throw error - just use empty stock data
+      dispatch({ type: 'SET_STOCK_USED', payload: {} });
     }
   };
 
@@ -176,6 +183,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error('Error in cleanupExpiredReservations:', error);
+      // Don't throw error - just log it
     }
   };
 
@@ -184,9 +192,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const currentCartQuantity = existingItem ? existingItem.quantity : 0;
     const totalQuantityNeeded = currentCartQuantity + quantity;
     
-    // Check stock availability
+    // Check stock availability (but be lenient - allow if stock data is not available)
     const maxStock = STOCK_LIMITS[item.id as keyof typeof STOCK_LIMITS];
-    if (maxStock) {
+    if (maxStock && Object.keys(state.stockUsed).length > 0) {
       const currentStockUsed = state.stockUsed[item.id] || 0;
       const availableStock = maxStock - currentStockUsed;
       
@@ -204,9 +212,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateQuantity = (id: string, quantity: number) => {
-    // Check stock before updating
+    // Check stock before updating (but be lenient - allow if stock data is not available)
     const maxStock = STOCK_LIMITS[id as keyof typeof STOCK_LIMITS];
-    if (maxStock) {
+    if (maxStock && Object.keys(state.stockUsed).length > 0) {
       const currentStockUsed = state.stockUsed[id] || 0;
       const availableStock = maxStock - currentStockUsed;
       

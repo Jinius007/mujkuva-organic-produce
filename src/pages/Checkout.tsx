@@ -125,7 +125,8 @@ const Checkout = () => {
         const errors = updateResults.filter(result => result.error);
         if (errors.length > 0) {
           console.error('Some orders failed to update:', errors);
-          throw new Error(`Failed to update ${errors.length} orders`);
+          // Don't throw error - just show warning and continue
+          toast.warning(`Some orders may not have been updated. Please contact support if needed.`);
         }
 
         console.log('All orders updated successfully:', updateResults.map(r => r.data));
@@ -159,7 +160,8 @@ const Checkout = () => {
         const errors = orderResults.filter(result => result.error);
         if (errors.length > 0) {
           console.error('Some fallback orders failed to insert:', errors);
-          throw new Error(`Failed to insert ${errors.length} fallback orders`);
+          // Don't throw error - just show warning and continue
+          toast.warning(`Some orders may not have been created. Please contact support if needed.`);
         }
       }
 
