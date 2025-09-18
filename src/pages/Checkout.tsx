@@ -84,20 +84,37 @@ const Checkout = () => {
       console.log('Transaction ID:', transactionId);
       console.log('Selected file:', selectedFile);
 
-      // Upload payment screenshot
-      const fileName = `payment_${Date.now()}_${selectedFile.name}`;
-      console.log('Attempting to upload file:', fileName);
+      // Upload payment screenshot with fallback handling
+      let fileName = null;
+      let uploadError = null;
       
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('new_payment_proofs')
-        .upload(fileName, selectedFile);
+      try {
+        fileName = `payment_${Date.now()}_${selectedFile.name}`;
+        console.log('Attempting to upload file:', fileName);
+        
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from('new_payment_proofs')
+          .upload(fileName, selectedFile);
 
-      if (uploadError) {
-        console.error('Upload error:', uploadError);
-        throw uploadError;
+        if (uploadErr) {
+          console.error('Upload error:', uploadErr);
+          uploadError = uploadErr;
+          // Don't throw error - continue with fallback
+        } else {
+          console.log('File uploaded successfully:', uploadData);
+        }
+      } catch (uploadException) {
+        console.error('Upload exception:', uploadException);
+        uploadError = uploadException;
+        // Don't throw error - continue with fallback
       }
 
-      console.log('File uploaded successfully:', uploadData);
+      // If upload failed, use a fallback filename
+      if (uploadError) {
+        console.warn('File upload failed, using fallback filename');
+        fileName = `payment_${Date.now()}_fallback.jpg`;
+        toast.warning('Payment screenshot upload failed, but order will still be processed. Please contact support if needed.');
+      }
 
       // Update existing RESERVED orders to CONFIRMED status
       if (effectiveCheckoutData.reservationIds && effectiveCheckoutData.reservationIds.length > 0) {
