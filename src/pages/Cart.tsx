@@ -24,7 +24,7 @@ const Cart = () => {
     }
   };
 
-  // Restore proper payment functionality
+  // URGENT: This creates RESERVED orders when user clicks Make Payment
   const handleProceedToPayment = async () => {
     if (!customerDetails.name.trim() || !customerDetails.phone.trim() || !customerDetails.address.trim()) {
       toast.error("Please fill in all delivery details");

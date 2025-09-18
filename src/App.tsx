@@ -25,7 +25,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   // Test Supabase connection on app load
-  // Force deployment - v2.1 with payment flow fixes - FINAL
+  // URGENT DEPLOYMENT - v2.2 - Payment flow fixes MUST be deployed NOW
   React.useEffect(() => {
     testSupabaseConnection();
   }, []);
