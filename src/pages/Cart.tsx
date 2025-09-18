@@ -96,6 +96,26 @@ const Cart = () => {
     <div className="page-transition pt-24">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
+          {/* MAINTENANCE MESSAGE */}
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">
+                  Ordering Temporarily Disabled
+                </h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <p>We are currently updating our ordering system. Please check back in a few minutes.</p>
+                  <p className="mt-1">Thank you for your patience!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-serif font-bold text-organic-800">Your Cart</h1>
             <button
@@ -227,11 +247,11 @@ const Cart = () => {
                   </div>
 
                   <button
-                    onClick={handleProceedToPayment}
-                    className="btn-primary w-full flex items-center justify-center space-x-2"
-                    disabled={isSubmitting}
+                    onClick={() => toast.error("Ordering is temporarily disabled. Please try again later.")}
+                    className="btn-primary w-full flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
+                    disabled={true}
                   >
-                    <span>Make Payment</span>
+                    <span>Ordering Disabled</span>
                     <ArrowRight size={20} />
                   </button>
                 </div>

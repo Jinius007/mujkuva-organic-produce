@@ -131,43 +131,10 @@ const ProductDetail = () => {
     );
   }
   
-  // Handle add to cart
+  // Handle add to cart - DISABLED FOR MAINTENANCE
   const handleAddToCart = () => {
-    if (product.id === "little-gourd") {
-      if (quantity > 10) {
-        toast.error("You cannot add more than 10 units of Little Gourd.");
-        return;
-      }
-    } else if (product.id === "bajra") {
-      if (quantity > 20) {
-        toast.error("You cannot add more than 20 units of Bajra.");
-        return;
-      }
-    } else if (product.id === "banana") {
-      if (quantity > 15) {
-        toast.error("You cannot add more than 15 units of Banana.");
-        return;
-      }
-    } else if (product.id === "galki") {
-      if (quantity > 10) {
-        toast.error("You cannot add more than 10 units of Galki.");
-        return;
-      }
-    }
-         const success = addToCart({
-       id: product.id,
-       name: product.name,
-       price: product.price,
-       unit: product.unit,
-       image: product.image,
-     }, quantity);
-     
-          if (success) {
-       toast.success(`Added ${quantity}kg of ${product.name} to cart`);
-       setQuantity(0.5); // Reset quantity
-     } else {
-       toast.error("Could not add to cart. Please check stock availability.");
-     }
+    toast.error("Ordering is temporarily disabled. Please try again later.");
+    return;
   };
   
   // Handle quantity changes
@@ -216,6 +183,25 @@ const ProductDetail = () => {
             <h1 className="text-4xl font-serif font-bold text-organic-800 mb-4">
               {product.name}
             </h1>
+            
+            {/* MAINTENANCE MESSAGE */}
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">
+                    Ordering Temporarily Disabled
+                  </h3>
+                  <div className="mt-1 text-sm text-red-700">
+                    <p>We are currently updating our ordering system. Please check back in a few minutes.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
             
             <div className="text-2xl font-bold text-organic-600 mb-6">
               ₹{product.price} per {product.unit}
