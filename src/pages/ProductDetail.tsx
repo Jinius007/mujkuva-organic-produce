@@ -42,6 +42,27 @@ const productsData: Record<string, Product> = {
       "Contributes to heart health"
     ]
   },
+  "bajra": {
+    id: "bajra",
+    name: "Bajra (Pearl Millet)",
+    description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
+    detailedDescription: "Our organic bajra is grown without synthetic pesticides or fertilizers, ensuring the highest quality and taste. Rich in nutrients and with a unique texture, bajra is perfect for various traditional dishes and provides numerous health benefits.",
+    price: 40,
+    unit: "kg",
+    image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
+    nutritionalInfo: [
+      "High in dietary fiber",
+      "Rich in B vitamins",
+      "Contains essential minerals like iron and magnesium",
+      "Good source of protein"
+    ],
+    benefits: [
+      "Supports digestive health",
+      "May help control blood sugar",
+      "Promotes heart health",
+      "Boosts energy levels"
+    ]
+  },
   "fresh-turmeric": {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
@@ -49,7 +70,7 @@ const productsData: Record<string, Product> = {
     detailedDescription: "Our fresh organic turmeric is cultivated using traditional farming methods without any chemical inputs. Known for its powerful anti-inflammatory and antioxidant properties, fresh turmeric is a superfood that provides numerous health benefits. It's perfect for cooking, making golden milk, or adding to your daily wellness routine.",
     price: 120,
     unit: "kg",
-    image: "/lovable-uploads/e19656d6-a849-47ba-8795-7c1f88dd326d.png",
+    image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
     nutritionalInfo: [
       "Rich in curcumin (active compound)",
       "High in antioxidants",

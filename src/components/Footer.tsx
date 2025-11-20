@@ -67,18 +67,18 @@ const Footer = () => {
               </li>
               <li>
                 <Link 
-                  to="/produce/fresh-turmeric"
+                  to="/produce/bajra"
                   className="text-organic-200 hover:text-white transition-colors"
                 >
-                  Fresh Turmeric
+                  Bajra
                 </Link>
               </li>
               <li>
                 <Link 
-                  to="/produce"
+                  to="/produce/fresh-turmeric"
                   className="text-organic-200 hover:text-white transition-colors"
                 >
-                  View All Products
+                  Fresh Turmeric
                 </Link>
               </li>
             </ul>

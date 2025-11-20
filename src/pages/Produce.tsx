@@ -16,7 +16,7 @@ interface Product {
   category: string;
 }
 
-// Updated produce list - Tindora and Fresh Turmeric only
+// Updated produce list - Tindora, Bajra, and Fresh Turmeric
 const products: Product[] = [
   {
     id: "tindora",
@@ -28,12 +28,21 @@ const products: Product[] = [
     category: "Vegetables"
   },
   {
+    id: "bajra",
+    name: "Bajra (Pearl Millet)",
+    description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
+    price: 40,
+    unit: "kg",
+    image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
+    category: "Grains"
+  },
+  {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
     description: "Fresh organic turmeric, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
     price: 120,
     unit: "kg",
-    image: "/lovable-uploads/e19656d6-a849-47ba-8795-7c1f88dd326d.png",
+    image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
     category: "Spices"
   }
 ];
@@ -87,6 +96,7 @@ const Produce = () => {
                 >
                   <option value="">All Categories</option>
                   <option value="Vegetables">Vegetables</option>
+                  <option value="Grains">Grains</option>
                   <option value="Spices">Spices</option>
                 </select>
               </div>

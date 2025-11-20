@@ -13,6 +13,7 @@ export interface CartItem {
 // Stock limits for the current batch
 const STOCK_LIMITS = {
   'tindora': 40, // 40 kg
+  'bajra': 100, // 100 kg
   'fresh-turmeric': 40, // 40 kg
 };
 
