@@ -212,14 +212,16 @@ const Checkout = () => {
         // Save to mujkuva_organic_orders table
         console.log('💾 Saving orders to mujkuva_organic_orders table...');
         const mujkuvaOrderPromises = effectiveCheckoutData.items.map(async (item) => {
+          // Convert kg to units (1 unit = 250 gm = 0.25 kg)
+          const quantityInUnits = Math.round(item.quantity / 0.25);
           const orderData = {
             product_id: item.id,
             product_name: item.name,
             customer_name: effectiveCheckoutData.customerDetails?.name || '',
             customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
             customer_address: effectiveCheckoutData.customerDetails?.address || '',
-            quantity: parseFloat(item.quantity.toFixed(2)),
-            weight_kg: parseFloat(item.quantity.toFixed(2)),
+            quantity: quantityInUnits, // Store in units (1, 2, 3...) not decimals
+            weight_kg: parseFloat(item.quantity.toFixed(2)), // Store actual weight in kg
             unit_price: parseFloat(item.price.toFixed(2)),
             total_price: parseFloat((item.price * item.quantity).toFixed(2)),
             order_date: new Date().toISOString().split('T')[0],
@@ -275,6 +277,8 @@ const Checkout = () => {
         
         const orderPromises = effectiveCheckoutData.items.map(async (item) => {
           const orderId = uuidv4();
+          // Convert kg to units (1 unit = 250 gm = 0.25 kg)
+          const quantityInUnits = Math.round(item.quantity / 0.25);
           const orderData = {
             id: orderId,
             product_id: item.id,
@@ -282,9 +286,9 @@ const Checkout = () => {
             customer_name: (effectiveCheckoutData.customerDetails?.name || '').trim(),
             customer_phone: (effectiveCheckoutData.customerDetails?.phone || '').trim(),
             customer_address: (effectiveCheckoutData.customerDetails?.address || '').trim(),
-            quantity: parseFloat(item.quantity.toFixed(2)), // Ensure proper numeric format
-            weight_kg: parseFloat(item.quantity.toFixed(2)), // Ensure proper numeric format
-            total_price: parseFloat((item.price * item.quantity).toFixed(2)), // Ensure proper numeric format
+            quantity: quantityInUnits, // Store in units (1, 2, 3...) not decimals
+            weight_kg: parseFloat(item.quantity.toFixed(2)), // Store actual weight in kg
+            total_price: parseFloat((item.price * item.quantity).toFixed(2)), // Total price based on weight
             order_date: new Date().toISOString().split('T')[0],
             status: 'confirmed',
             transaction_id: transactionId,
@@ -339,14 +343,16 @@ const Checkout = () => {
         // Also save to mujkuva_organic_orders table
         console.log('💾 Saving fallback orders to mujkuva_organic_orders table...');
         const mujkuvaFallbackPromises = effectiveCheckoutData.items.map(async (item) => {
+          // Convert kg to units (1 unit = 250 gm = 0.25 kg)
+          const quantityInUnits = Math.round(item.quantity / 0.25);
           const orderData = {
             product_id: item.id,
             product_name: item.name,
             customer_name: (effectiveCheckoutData.customerDetails?.name || '').trim(),
             customer_phone: (effectiveCheckoutData.customerDetails?.phone || '').trim(),
             customer_address: (effectiveCheckoutData.customerDetails?.address || '').trim(),
-            quantity: parseFloat(item.quantity.toFixed(2)),
-            weight_kg: parseFloat(item.quantity.toFixed(2)),
+            quantity: quantityInUnits, // Store in units (1, 2, 3...) not decimals
+            weight_kg: parseFloat(item.quantity.toFixed(2)), // Store actual weight in kg
             unit_price: parseFloat(item.price.toFixed(2)),
             total_price: parseFloat((item.price * item.quantity).toFixed(2)),
             order_date: new Date().toISOString().split('T')[0],

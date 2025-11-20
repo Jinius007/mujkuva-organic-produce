@@ -68,8 +68,10 @@ const Cart = () => {
       console.log('✅ Supabase connection test passed');
 
       // Create RESERVED status orders for each product immediately
+      // Convert kg to units (1 unit = 250 gm = 0.25 kg)
       const reservationPromises = state.items.map(async (item) => {
         const orderId = crypto.randomUUID();
+        const quantityInUnits = Math.round(item.quantity / 0.25); // Convert kg to units (1 unit = 0.25 kg)
         const orderData = {
           id: orderId,
           product_id: item.id,
@@ -77,9 +79,9 @@ const Cart = () => {
           customer_name: customerDetails.name.trim(),
           customer_phone: customerDetails.phone.trim(),
           customer_address: customerDetails.address.trim(),
-          quantity: Math.round(item.quantity * 100) / 100, // Ensure proper numeric format
-          weight_kg: parseFloat(item.quantity.toFixed(2)), // Ensure proper numeric format
-          total_price: parseFloat((item.price * item.quantity).toFixed(2)), // Ensure proper numeric format
+          quantity: quantityInUnits, // Store in units (1, 2, 3...) not decimals
+          weight_kg: parseFloat(item.quantity.toFixed(2)), // Store actual weight in kg
+          total_price: parseFloat((item.price * item.quantity).toFixed(2)), // Total price based on weight
           order_date: new Date().toISOString().split('T')[0],
           status: 'reserved', // Status: RESERVED (not confirmed yet)
           transaction_id: null, // No transaction ID yet
