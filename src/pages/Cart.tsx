@@ -158,12 +158,74 @@ const Cart = () => {
         failed: errors.length
       });
 
+      // Also save to mujkuva_organic_orders table with "reserved" status
+      console.log('💾 Saving orders to mujkuva_organic_orders table with RESERVED status...');
+      const mujkuvaReservationPromises = state.items.map(async (item) => {
+        // Convert kg to units (1 unit = 250 gm = 0.25 kg)
+        const quantityInUnits = Math.round(item.quantity / 0.25);
+        const orderData = {
+          product_id: item.id,
+          product_name: item.name,
+          customer_name: customerDetails.name.trim(),
+          customer_phone: customerDetails.phone.trim(),
+          customer_address: customerDetails.address.trim(),
+          quantity: quantityInUnits, // Store in units (1, 2, 3...)
+          weight_kg: parseFloat(item.quantity.toFixed(2)), // Store actual weight in kg
+          unit_price: parseFloat(item.price.toFixed(2)),
+          total_price: parseFloat((item.price * item.quantity).toFixed(2)),
+          order_date: new Date().toISOString().split('T')[0],
+          status: 'reserved', // Status: RESERVED (not confirmed yet)
+          payment_status: 'pending', // Payment not received yet
+          transaction_id: null,
+          payment_screenshot_path: null,
+          payment_method: null
+        };
+
+        console.log(`📝 Saving RESERVED order for ${item.name} to mujkuva_organic_orders:`, orderData);
+        const result = await (supabase as any)
+          .from('mujkuva_organic_orders')
+          .insert(orderData)
+          .select();
+
+        if (result.error) {
+          console.error(`❌ Failed to save RESERVED order for ${item.name}:`, result.error);
+          console.error('   Error code:', result.error.code);
+          console.error('   Error message:', result.error.message);
+        } else {
+          console.log(`✅ Successfully saved RESERVED order for ${item.name}:`, result.data);
+          if (result.data && result.data.length > 0) {
+            const orderData = result.data[0] as any;
+            console.log(`   Order Number: ${orderData.order_number || 'N/A'}`);
+          }
+        }
+
+        return result;
+      });
+
+      const mujkuvaReservationResults = await Promise.all(mujkuvaReservationPromises);
+      const mujkuvaReservationErrors = mujkuvaReservationResults.filter(result => result.error);
+      const mujkuvaReservationSuccesses = mujkuvaReservationResults.filter(result => !result.error && result.data && result.data.length > 0);
+
+      if (mujkuvaReservationErrors.length > 0) {
+        console.warn('⚠️ Some orders failed to save to mujkuva_organic_orders:', mujkuvaReservationErrors);
+        // Don't block the flow - just log the warning
+      }
+
+      if (mujkuvaReservationSuccesses.length > 0) {
+        console.log(`✅ ${mujkuvaReservationSuccesses.length} order(s) saved to mujkuva_organic_orders with RESERVED status`);
+        const orderNumbers = mujkuvaReservationSuccesses.map(r => (r.data?.[0] as any)?.order_number).filter(Boolean);
+        if (orderNumbers.length > 0) {
+          console.log(`   Order Numbers: ${orderNumbers.join(', ')}`);
+        }
+      }
+
       // Store checkout data in sessionStorage for the checkout page
       const checkoutData = {
         items: state.items,
         total: state.total,
         customerDetails: customerDetails,
-        reservationIds: reservationIds // Store reservation IDs
+        reservationIds: reservationIds, // Store reservation IDs for order_slots
+        mujkuvaOrderIds: mujkuvaReservationSuccesses.map(r => (r.data?.[0] as any)?.id).filter(Boolean) // Store mujkuva order IDs
       };
       sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
 
