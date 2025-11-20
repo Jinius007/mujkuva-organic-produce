@@ -99,9 +99,6 @@ BEGIN
     RAISE NOTICE '   - Decimal quantity (0.25) inserted correctly';
     RAISE NOTICE '   - Order ID: %', test_id;
     
-    -- Show the inserted record
-    SELECT * FROM public.order_slots WHERE id = test_id;
-    
     -- Clean up test data
     DELETE FROM public.order_slots WHERE id = test_id;
     RAISE NOTICE '✅ Test data cleaned up';

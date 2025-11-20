@@ -24,6 +24,20 @@ const Cart = () => {
     }
   };
 
+  // Convert kg to units (1 unit = 0.25 kg = 250 gm)
+  const kgToUnits = (kg: number) => Math.round(kg / 0.25);
+  
+  // Convert units to kg
+  const unitsToKg = (units: number) => units * 0.25;
+  
+  // Handle quantity change in units
+  const handleQuantityChangeInUnits = (id: string, currentKg: number, deltaUnits: number) => {
+    const currentUnits = kgToUnits(currentKg);
+    const newUnits = Math.max(1, currentUnits + deltaUnits); // Minimum 1 unit
+    const newKg = unitsToKg(newUnits);
+    handleQuantityChange(id, newKg);
+  };
+
   // URGENT: This creates RESERVED orders when user clicks Make Payment
   const handleProceedToPayment = async () => {
     if (!customerDetails.name.trim() || !customerDetails.phone.trim() || !customerDetails.address.trim()) {
@@ -215,21 +229,24 @@ const Cart = () => {
                         <div className="flex-grow">
                           <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
                           <p className="text-gray-600">₹{item.price} per {item.unit}</p>
-                           <p className="text-sm text-gray-500">
-                            {item.quantity}kg total
+                          <p className="text-sm text-gray-500">
+                            {kgToUnits(item.quantity)} unit{kgToUnits(item.quantity) > 1 ? 's' : ''} ({item.quantity} kg)
                           </p>
                         </div>
                         <div className="flex items-center space-x-3">
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 0.25)}
+                            onClick={() => handleQuantityChangeInUnits(item.id, item.quantity, -1)}
                             disabled={item.quantity <= 0.25}
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Minus size={16} />
                           </button>
-                          <span className="w-12 text-center font-medium">{item.quantity} kg</span>
+                          <div className="flex flex-col items-center">
+                            <span className="w-12 text-center font-medium">{kgToUnits(item.quantity)} unit{kgToUnits(item.quantity) > 1 ? 's' : ''}</span>
+                            <span className="text-xs text-gray-500">{item.quantity} kg</span>
+                          </div>
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 0.25)}
+                            onClick={() => handleQuantityChangeInUnits(item.id, item.quantity, 1)}
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
                           >
                             <Plus size={16} />

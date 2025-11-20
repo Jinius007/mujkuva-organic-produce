@@ -95,6 +95,81 @@ export type Database = {
         }
         Relationships: []
       }
+      mujkuva_organic_orders: {
+        Row: {
+          id: string
+          order_number: string
+          product_id: string
+          product_name: string
+          customer_name: string
+          customer_phone: string
+          customer_email: string | null
+          customer_address: string
+          quantity: number
+          weight_kg: number
+          unit_price: number
+          total_price: number
+          order_date: string
+          delivery_date: string | null
+          status: string
+          payment_status: string
+          transaction_id: string | null
+          payment_screenshot_path: string | null
+          payment_method: string | null
+          notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          order_number?: string
+          product_id: string
+          product_name: string
+          customer_name: string
+          customer_phone: string
+          customer_email?: string | null
+          customer_address: string
+          quantity: number
+          weight_kg: number
+          unit_price: number
+          total_price: number
+          order_date?: string
+          delivery_date?: string | null
+          status?: string
+          payment_status?: string
+          transaction_id?: string | null
+          payment_screenshot_path?: string | null
+          payment_method?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          order_number?: string
+          product_id?: string
+          product_name?: string
+          customer_name?: string
+          customer_phone?: string
+          customer_email?: string | null
+          customer_address?: string
+          quantity?: number
+          weight_kg?: number
+          unit_price?: number
+          total_price?: number
+          order_date?: string
+          delivery_date?: string | null
+          status?: string
+          payment_status?: string
+          transaction_id?: string | null
+          payment_screenshot_path?: string | null
+          payment_method?: string | null
+          notes?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       orders: {
         Row: {
           created_at: string | null

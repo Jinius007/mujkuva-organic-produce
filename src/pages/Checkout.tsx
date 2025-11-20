@@ -208,6 +208,65 @@ const Checkout = () => {
         const verifiedOrders = await Promise.all(verifyPromises);
         const confirmedOrders = verifiedOrders.filter(order => order && order.status === 'confirmed');
         console.log(`✅ Verification complete: ${confirmedOrders.length}/${effectiveCheckoutData.reservationIds.length} orders confirmed`);
+
+        // Save to mujkuva_organic_orders table
+        console.log('💾 Saving orders to mujkuva_organic_orders table...');
+        const mujkuvaOrderPromises = effectiveCheckoutData.items.map(async (item) => {
+          const orderData = {
+            product_id: item.id,
+            product_name: item.name,
+            customer_name: effectiveCheckoutData.customerDetails?.name || '',
+            customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
+            customer_address: effectiveCheckoutData.customerDetails?.address || '',
+            quantity: parseFloat(item.quantity.toFixed(2)),
+            weight_kg: parseFloat(item.quantity.toFixed(2)),
+            unit_price: parseFloat(item.price.toFixed(2)),
+            total_price: parseFloat((item.price * item.quantity).toFixed(2)),
+            order_date: new Date().toISOString().split('T')[0],
+            status: 'confirmed',
+            payment_status: 'paid',
+            transaction_id: transactionId,
+            payment_screenshot_path: fileName,
+            payment_method: 'UPI'
+          };
+
+          console.log(`📝 Saving order for ${item.name} to mujkuva_organic_orders:`, orderData);
+          const result = await (supabase as any)
+            .from('mujkuva_organic_orders')
+            .insert(orderData)
+            .select();
+
+          if (result.error) {
+            console.error(`❌ Failed to save order for ${item.name}:`, result.error);
+            console.error('   Error code:', result.error.code);
+            console.error('   Error message:', result.error.message);
+          } else {
+            console.log(`✅ Successfully saved order for ${item.name}:`, result.data);
+            if (result.data && result.data.length > 0) {
+              const orderData = result.data[0] as any;
+              console.log(`   Order Number: ${orderData.order_number || 'N/A'}`);
+            }
+          }
+
+          return result;
+        });
+
+        const mujkuvaResults = await Promise.all(mujkuvaOrderPromises);
+        const mujkuvaErrors = mujkuvaResults.filter(result => result.error);
+        const mujkuvaSuccesses = mujkuvaResults.filter(result => !result.error && result.data && result.data.length > 0);
+
+        if (mujkuvaErrors.length > 0) {
+          console.error('❌ Some orders failed to save to mujkuva_organic_orders:', mujkuvaErrors);
+          toast.warning(`${mujkuvaErrors.length} order(s) may not have been saved to main orders table.`);
+        }
+
+        if (mujkuvaSuccesses.length > 0) {
+          console.log(`✅ ${mujkuvaSuccesses.length} order(s) saved to mujkuva_organic_orders successfully`);
+          const orderNumbers = mujkuvaSuccesses.map(r => (r.data?.[0] as any)?.order_number).filter(Boolean);
+          if (orderNumbers.length > 0) {
+            console.log(`   Order Numbers: ${orderNumbers.join(', ')}`);
+          }
+        }
       } else {
         // Fallback: Create new orders if no reservation IDs (shouldn't happen in normal flow)
         console.warn('⚠️ No reservation IDs found, creating new orders as fallback...');
@@ -275,6 +334,65 @@ const Checkout = () => {
         
         if (successes.length > 0) {
           console.log(`✅ ${successes.length} fallback order(s) created successfully`);
+        }
+
+        // Also save to mujkuva_organic_orders table
+        console.log('💾 Saving fallback orders to mujkuva_organic_orders table...');
+        const mujkuvaFallbackPromises = effectiveCheckoutData.items.map(async (item) => {
+          const orderData = {
+            product_id: item.id,
+            product_name: item.name,
+            customer_name: (effectiveCheckoutData.customerDetails?.name || '').trim(),
+            customer_phone: (effectiveCheckoutData.customerDetails?.phone || '').trim(),
+            customer_address: (effectiveCheckoutData.customerDetails?.address || '').trim(),
+            quantity: parseFloat(item.quantity.toFixed(2)),
+            weight_kg: parseFloat(item.quantity.toFixed(2)),
+            unit_price: parseFloat(item.price.toFixed(2)),
+            total_price: parseFloat((item.price * item.quantity).toFixed(2)),
+            order_date: new Date().toISOString().split('T')[0],
+            status: 'confirmed',
+            payment_status: 'paid',
+            transaction_id: transactionId,
+            payment_screenshot_path: fileName,
+            payment_method: 'UPI'
+          };
+
+          console.log(`📝 Saving fallback order for ${item.name} to mujkuva_organic_orders:`, orderData);
+          const result = await (supabase as any)
+            .from('mujkuva_organic_orders')
+            .insert(orderData)
+            .select();
+
+          if (result.error) {
+            console.error(`❌ Failed to save fallback order for ${item.name}:`, result.error);
+            console.error('   Error code:', result.error.code);
+            console.error('   Error message:', result.error.message);
+          } else {
+            console.log(`✅ Successfully saved fallback order for ${item.name}:`, result.data);
+            if (result.data && result.data.length > 0) {
+              const orderData = result.data[0] as any;
+              console.log(`   Order Number: ${orderData.order_number || 'N/A'}`);
+            }
+          }
+
+          return result;
+        });
+
+        const mujkuvaFallbackResults = await Promise.all(mujkuvaFallbackPromises);
+        const mujkuvaFallbackErrors = mujkuvaFallbackResults.filter(result => result.error);
+        const mujkuvaFallbackSuccesses = mujkuvaFallbackResults.filter(result => !result.error && result.data && result.data.length > 0);
+
+        if (mujkuvaFallbackErrors.length > 0) {
+          console.error('❌ Some fallback orders failed to save to mujkuva_organic_orders:', mujkuvaFallbackErrors);
+          toast.warning(`${mujkuvaFallbackErrors.length} order(s) may not have been saved to main orders table.`);
+        }
+
+        if (mujkuvaFallbackSuccesses.length > 0) {
+          console.log(`✅ ${mujkuvaFallbackSuccesses.length} fallback order(s) saved to mujkuva_organic_orders successfully`);
+          const orderNumbers = mujkuvaFallbackSuccesses.map(r => (r.data?.[0] as any)?.order_number).filter(Boolean);
+          if (orderNumbers.length > 0) {
+            console.log(`   Order Numbers: ${orderNumbers.join(', ')}`);
+          }
         }
       }
 

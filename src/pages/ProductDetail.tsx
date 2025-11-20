@@ -89,8 +89,11 @@ const productsData: Record<string, Product> = {
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(0.25); // Minimum order: 250 gm
+  const [quantity, setQuantity] = useState(1); // Minimum order: 1 unit = 250 gm
   const { addToCart } = useCart();
+  
+  // Convert units to kg (1 unit = 0.25 kg = 250 gm)
+  const quantityInKg = quantity * 0.25;
   
   // Get product details
   const product = productId ? productsData[productId] : null;
@@ -112,10 +115,13 @@ const ProductDetail = () => {
   
   // Handle add to cart
   const handleAddToCart = () => {
-    if (quantity < 0.25) {
-      toast.error("Minimum order quantity is 250 gm (0.25 kg)");
+    if (quantity < 1) {
+      toast.error("Minimum order quantity is 1 unit (250 gm)");
       return;
     }
+    
+    // Convert units to kg for cart (1 unit = 0.25 kg)
+    const quantityInKg = quantity * 0.25;
     
     const success = addToCart({
       id: product.id,
@@ -123,22 +129,22 @@ const ProductDetail = () => {
       price: product.price,
       unit: product.unit,
       image: product.image,
-    }, quantity);
+    }, quantityInKg);
     
     if (success) {
-      toast.success(`Added ${quantity}kg of ${product.name} to cart`);
-      setQuantity(0.25); // Reset to minimum quantity
+      toast.success(`Added ${quantity} unit${quantity > 1 ? 's' : ''} (${quantityInKg}kg) of ${product.name} to cart`);
+      setQuantity(1); // Reset to minimum quantity (1 unit)
     } else {
       toast.error("Could not add to cart. Please check stock availability.");
     }
   };
   
-  // Handle quantity changes (increment/decrement by 0.25 kg = 250 gm)
+  // Handle quantity changes (increment/decrement by 1 unit = 250 gm)
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 0.25);
+    setQuantity(prev => prev + 1);
   };
   
-  const decrementQuantity = () => setQuantity(prev => (prev > 0.25 ? prev - 0.25 : 0.25));
+  const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
 
   return (
     <div className="page-transition pt-24">
@@ -190,16 +196,19 @@ const ProductDetail = () => {
             
             {/* Quantity Selector */}
             <div className="mb-6">
-              <label className="block text-gray-700 mb-2">Quantity (Minimum: 250 gm):</label>
+              <label className="block text-gray-700 mb-2">Quantity (1 unit = 250 gm, Minimum: 1 unit):</label>
               <div className="flex items-center space-x-3">
                 <button
                   onClick={decrementQuantity}
-                  disabled={quantity <= 0.25}
+                  disabled={quantity <= 1}
                   className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50"
                 >
                   -
                 </button>
-                <span className="text-lg font-semibold w-12 text-center">{quantity}</span>
+                <div className="flex flex-col items-center">
+                  <span className="text-lg font-semibold w-12 text-center">{quantity} unit{quantity > 1 ? 's' : ''}</span>
+                  <span className="text-sm text-gray-500">({quantityInKg} kg)</span>
+                </div>
                 <button
                   onClick={incrementQuantity}
                   className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50"
