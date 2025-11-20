@@ -38,12 +38,19 @@ const Checkout = () => {
   // Restore: Load checkoutData from sessionStorage on mount
   useEffect(() => {
     const stored = sessionStorage.getItem('checkoutData');
+    console.log('📦 Loading checkout data from sessionStorage...');
     if (stored) {
       try {
-        setCheckoutData(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        console.log('✅ Checkout data loaded:', parsed);
+        console.log('   Reservation IDs:', parsed.reservationIds);
+        setCheckoutData(parsed);
       } catch (e) {
+        console.error('❌ Failed to parse checkout data:', e);
         setCheckoutData(null);
       }
+    } else {
+      console.warn('⚠️ No checkout data found in sessionStorage');
     }
   }, []);
 
@@ -118,21 +125,39 @@ const Checkout = () => {
 
       // Update existing RESERVED orders to CONFIRMED status
       if (effectiveCheckoutData.reservationIds && effectiveCheckoutData.reservationIds.length > 0) {
-        console.log('Updating existing RESERVED orders to CONFIRMED...');
+        console.log('🔄 Updating existing RESERVED orders to CONFIRMED...');
+        console.log('📋 Reservation IDs:', effectiveCheckoutData.reservationIds);
         
         const updatePromises = effectiveCheckoutData.reservationIds.map(async (reservationId) => {
+          if (!reservationId) {
+            console.error('❌ Invalid reservation ID:', reservationId);
+            return { error: { message: 'Invalid reservation ID' }, data: null };
+          }
+
           const updateData = {
             status: 'confirmed',
             transaction_id: transactionId,
             payment_screenshot_path: fileName
           };
 
-          console.log(`Updating reservation ${reservationId} to confirmed:`, updateData);
-          return supabase
+          console.log(`📝 Updating reservation ${reservationId} to confirmed:`, updateData);
+          const result = await supabase
             .from('order_slots')
             .update(updateData)
             .eq('id', reservationId)
             .select();
+
+          if (result.error) {
+            console.error(`❌ Failed to update reservation ${reservationId}:`, result.error);
+            console.error('   Error code:', result.error.code);
+            console.error('   Error message:', result.error.message);
+            console.error('   Error details:', result.error.details);
+            console.error('   Error hint:', result.error.hint);
+          } else {
+            console.log(`✅ Successfully updated reservation ${reservationId}:`, result.data);
+          }
+
+          return result;
         });
 
         // Update all reservation records
@@ -140,16 +165,54 @@ const Checkout = () => {
         
         // Check for any errors
         const errors = updateResults.filter(result => result.error);
+        const successes = updateResults.filter(result => !result.error && result.data && result.data.length > 0);
+        
         if (errors.length > 0) {
-          console.error('Some orders failed to update:', errors);
-          // Don't throw error - just show warning and continue
-          toast.warning(`Some orders may not have been updated. Please contact support if needed.`);
+          console.error('❌ Some orders failed to update:', errors);
+          errors.forEach((error, index) => {
+            console.error(`   Error ${index + 1}:`, error.error);
+          });
+          toast.error(`${errors.length} order(s) failed to update. Please check console for details and contact support.`);
         }
 
-        console.log('All orders updated successfully:', updateResults.map(r => r.data));
+        if (successes.length > 0) {
+          console.log(`✅ ${successes.length} order(s) updated successfully:`, successes.map(r => r.data));
+        }
+
+        if (errors.length === updateResults.length) {
+          // All updates failed - this is critical
+          console.error('❌ CRITICAL: All order updates failed!');
+          toast.error('Failed to confirm orders. Please contact support immediately.');
+          setIsUploading(false);
+          return;
+        }
+
+        // Verify the updates were successful by querying the database
+        console.log('🔍 Verifying order updates...');
+        const verifyPromises = effectiveCheckoutData.reservationIds.map(async (reservationId) => {
+          const { data, error } = await supabase
+            .from('order_slots')
+            .select('id, status, transaction_id, payment_screenshot_path')
+            .eq('id', reservationId)
+            .single();
+          
+          if (error) {
+            console.error(`❌ Verification failed for ${reservationId}:`, error);
+            return null;
+          }
+          
+          console.log(`✅ Verified order ${reservationId}:`, data);
+          return data;
+        });
+
+        const verifiedOrders = await Promise.all(verifyPromises);
+        const confirmedOrders = verifiedOrders.filter(order => order && order.status === 'confirmed');
+        console.log(`✅ Verification complete: ${confirmedOrders.length}/${effectiveCheckoutData.reservationIds.length} orders confirmed`);
       } else {
         // Fallback: Create new orders if no reservation IDs (shouldn't happen in normal flow)
-        console.warn('No reservation IDs found, creating new orders as fallback...');
+        console.warn('⚠️ No reservation IDs found, creating new orders as fallback...');
+        console.warn('   Checkout data:', effectiveCheckoutData);
+        console.warn('   Reservation IDs:', effectiveCheckoutData.reservationIds);
         
         const orderPromises = effectiveCheckoutData.items.map(async (item) => {
           const orderId = uuidv4();
@@ -157,28 +220,61 @@ const Checkout = () => {
             id: orderId,
             product_id: item.id,
             product_name: item.name,
-            customer_name: effectiveCheckoutData.customerDetails?.name || '',
-            customer_phone: effectiveCheckoutData.customerDetails?.phone || '',
-            customer_address: effectiveCheckoutData.customerDetails?.address || '',
-            quantity: item.quantity,
-            weight_kg: item.quantity,
-            total_price: item.price * item.quantity,
+            customer_name: (effectiveCheckoutData.customerDetails?.name || '').trim(),
+            customer_phone: (effectiveCheckoutData.customerDetails?.phone || '').trim(),
+            customer_address: (effectiveCheckoutData.customerDetails?.address || '').trim(),
+            quantity: parseFloat(item.quantity.toFixed(2)), // Ensure proper numeric format
+            weight_kg: parseFloat(item.quantity.toFixed(2)), // Ensure proper numeric format
+            total_price: parseFloat((item.price * item.quantity).toFixed(2)), // Ensure proper numeric format
             order_date: new Date().toISOString().split('T')[0],
             status: 'confirmed',
             transaction_id: transactionId,
             payment_screenshot_path: fileName
           };
 
-          console.log(`Creating fallback order for ${item.name}:`, orderData);
-          return supabase.from('order_slots').insert(orderData).select();
+          console.log(`📝 Creating fallback order for ${item.name}:`, orderData);
+          const result = await supabase.from('order_slots').insert(orderData).select();
+          
+          if (result.error) {
+            console.error(`❌ Failed to create fallback order for ${item.name}:`, result.error);
+            console.error('   Error code:', result.error.code);
+            console.error('   Error message:', result.error.message);
+            console.error('   Error details:', result.error.details);
+            console.error('   Error hint:', result.error.hint);
+            
+            if (result.error.message?.includes('integer') || result.error.message?.includes('type')) {
+              console.error('   ⚠️  LIKELY ISSUE: quantity field is still INTEGER type!');
+              console.error('   SOLUTION: Run the fix script: supabase/fix-order-slots-complete.sql');
+            }
+          } else {
+            console.log(`✅ Successfully created fallback order for ${item.name}:`, result.data);
+          }
+          
+          return result;
         });
 
         const orderResults = await Promise.all(orderPromises);
         const errors = orderResults.filter(result => result.error);
+        const successes = orderResults.filter(result => !result.error && result.data && result.data.length > 0);
+        
         if (errors.length > 0) {
-          console.error('Some fallback orders failed to insert:', errors);
-          // Don't throw error - just show warning and continue
-          toast.warning(`Some orders may not have been created. Please contact support if needed.`);
+          console.error('❌ Some fallback orders failed to insert:', errors);
+          errors.forEach((error, index) => {
+            console.error(`   Error ${index + 1}:`, error.error);
+          });
+          toast.error(`${errors.length} order(s) failed to create. Please check console for details.`);
+          
+          if (errors.length === orderResults.length) {
+            // All inserts failed - critical error
+            console.error('❌ CRITICAL: All fallback orders failed to insert!');
+            toast.error('Failed to create orders. Please contact support immediately.');
+            setIsUploading(false);
+            return;
+          }
+        }
+        
+        if (successes.length > 0) {
+          console.log(`✅ ${successes.length} fallback order(s) created successfully`);
         }
       }
 
@@ -203,9 +299,13 @@ const Checkout = () => {
   // Use cart data directly and validate before allowing checkout
   let effectiveCheckoutData: CheckoutData;
   if (checkoutData && checkoutData.items && checkoutData.items.length > 0) {
+    console.log('✅ Using checkout data from sessionStorage');
+    console.log('   Items:', checkoutData.items.length);
+    console.log('   Reservation IDs:', checkoutData.reservationIds);
     effectiveCheckoutData = checkoutData;
   } else if (cartState.items && cartState.items.length > 0) {
     // Use cart data if no checkout data but cart has items
+    console.warn('⚠️ No checkout data found, using cart state (reservation IDs will be missing)');
     effectiveCheckoutData = {
       items: cartState.items.map(item => ({
         id: item.id,
@@ -214,7 +314,8 @@ const Checkout = () => {
         quantity: item.quantity
       })),
       total: cartState.total,
-      customerDetails: { name: '', phone: '', address: '' }
+      customerDetails: { name: '', phone: '', address: '' },
+      reservationIds: [] // No reservation IDs available
     };
   } else {
     // No items available - redirect to produce page
@@ -222,6 +323,13 @@ const Checkout = () => {
     navigate('/produce');
     return null;
   }
+  
+  // Log effective checkout data before submission
+  console.log('📋 Effective checkout data before submission:', {
+    items: effectiveCheckoutData.items.length,
+    reservationIds: effectiveCheckoutData.reservationIds?.length || 0,
+    hasReservationIds: !!(effectiveCheckoutData.reservationIds && effectiveCheckoutData.reservationIds.length > 0)
+  });
 
   return (
     <div className="page-transition pt-24">

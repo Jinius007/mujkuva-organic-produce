@@ -60,12 +60,12 @@ const Cart = () => {
           id: orderId,
           product_id: item.id,
           product_name: item.name,
-          customer_name: customerDetails.name,
-          customer_phone: customerDetails.phone,
-          customer_address: customerDetails.address,
-          quantity: item.quantity,
-          weight_kg: item.quantity,
-          total_price: item.price * item.quantity,
+          customer_name: customerDetails.name.trim(),
+          customer_phone: customerDetails.phone.trim(),
+          customer_address: customerDetails.address.trim(),
+          quantity: Math.round(item.quantity * 100) / 100, // Ensure proper numeric format
+          weight_kg: parseFloat(item.quantity.toFixed(2)), // Ensure proper numeric format
+          total_price: parseFloat((item.price * item.quantity).toFixed(2)), // Ensure proper numeric format
           order_date: new Date().toISOString().split('T')[0],
           status: 'reserved', // Status: RESERVED (not confirmed yet)
           transaction_id: null, // No transaction ID yet
@@ -74,29 +74,80 @@ const Cart = () => {
 
         console.log(`📝 Creating RESERVED order for ${item.name}:`, orderData);
         const result = await supabase.from('order_slots').insert(orderData).select();
-        console.log(`📝 Result for ${item.name}:`, result);
+        
+        if (result.error) {
+          console.error(`❌ Failed to create reservation for ${item.name}:`, result.error);
+          console.error('   Error code:', result.error.code);
+          console.error('   Error message:', result.error.message);
+          console.error('   Error details:', result.error.details);
+          console.error('   Error hint:', result.error.hint);
+        } else {
+          console.log(`✅ Successfully created reservation for ${item.name}:`, result.data);
+        }
+        
         return result;
       });
 
       // Insert all reservation records
       const reservationResults = await Promise.all(reservationPromises);
       
-      // Check for any errors
+      // Check for any errors - CRITICAL: Don't proceed if any insert fails
       const errors = reservationResults.filter(result => result.error);
       if (errors.length > 0) {
-        console.error('Some reservations failed to create:', errors);
-        // Don't throw error - just show warning and continue
-        toast.warning(`Some products may not be available. Please check your order.`);
+        console.error('❌ CRITICAL: Some reservations failed to create:', errors);
+        errors.forEach((error, index) => {
+          console.error(`   Error ${index + 1}:`, error.error);
+          console.error(`   Full error object:`, JSON.stringify(error.error, null, 2));
+        });
+        toast.error(`Failed to create orders. Please check console for details and try again.`);
+        setIsSubmitting(false);
+        return; // Stop here - don't proceed to checkout
       }
 
-      console.log('All reservations created successfully:', reservationResults.map(r => r.data));
+      // Extract reservation IDs with better error handling
+      const reservationIds: string[] = [];
+      reservationResults.forEach((result, index) => {
+        if (result.error) {
+          console.error(`❌ Reservation ${index + 1} failed:`, result.error);
+        } else if (result.data && result.data.length > 0) {
+          const id = result.data[0].id;
+          if (id) {
+            reservationIds.push(id);
+            console.log(`✅ Reservation ${index + 1} created with ID:`, id);
+          } else {
+            console.error(`❌ Reservation ${index + 1} created but no ID returned:`, result.data);
+          }
+        } else {
+          console.error(`❌ Reservation ${index + 1} returned no data:`, result);
+        }
+      });
+
+      // CRITICAL: Verify we have reservation IDs before proceeding
+      if (reservationIds.length === 0) {
+        console.error('❌ CRITICAL: No reservation IDs were created!');
+        toast.error('Failed to create orders. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (reservationIds.length !== state.items.length) {
+        console.warn(`⚠️ Warning: Only ${reservationIds.length} of ${state.items.length} orders were created`);
+        toast.warning(`Only ${reservationIds.length} of ${state.items.length} orders were created. Please check your order.`);
+      }
+
+      console.log('📋 All reservation IDs:', reservationIds);
+      console.log('📊 Reservation summary:', {
+        total: reservationResults.length,
+        successful: reservationIds.length,
+        failed: errors.length
+      });
 
       // Store checkout data in sessionStorage for the checkout page
       const checkoutData = {
         items: state.items,
         total: state.total,
         customerDetails: customerDetails,
-        reservationIds: reservationResults.map(r => r.data?.[0]?.id).filter(Boolean) // Store reservation IDs
+        reservationIds: reservationIds // Store reservation IDs
       };
       sessionStorage.setItem('checkoutData', JSON.stringify(checkoutData));
 
