@@ -17,7 +17,7 @@ const Cart = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
-    if (newQuantity < 0.5) {
+    if (newQuantity < 0.25) {
       removeFromCart(id);
     } else {
       updateQuantity(id, newQuantity);
@@ -34,6 +34,25 @@ const Cart = () => {
     setIsSubmitting(true);
 
     try {
+      console.log('🚀 Starting payment process...');
+      console.log('Customer details:', customerDetails);
+      console.log('Cart items:', state.items);
+      console.log('Supabase client:', supabase);
+
+      // Test Supabase connection first
+      console.log('🔍 Testing Supabase connection...');
+      const { data: testData, error: testError } = await supabase
+        .from('order_slots')
+        .select('count')
+        .limit(1);
+      
+      if (testError) {
+        console.error('❌ Supabase connection test failed:', testError);
+        toast.error('Database connection failed. Please try again.');
+        return;
+      }
+      console.log('✅ Supabase connection test passed');
+
       // Create RESERVED status orders for each product immediately
       const reservationPromises = state.items.map(async (item) => {
         const orderId = crypto.randomUUID();
@@ -53,8 +72,10 @@ const Cart = () => {
           payment_screenshot_path: null // No screenshot yet
         };
 
-        console.log(`Creating RESERVED order for ${item.name}:`, orderData);
-        return supabase.from('order_slots').insert(orderData).select();
+        console.log(`📝 Creating RESERVED order for ${item.name}:`, orderData);
+        const result = await supabase.from('order_slots').insert(orderData).select();
+        console.log(`📝 Result for ${item.name}:`, result);
+        return result;
       });
 
       // Insert all reservation records
@@ -96,26 +117,6 @@ const Cart = () => {
     <div className="page-transition pt-24">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          {/* MAINTENANCE MESSAGE */}
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-              </div>
-              <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">
-                  Ordering Temporarily Disabled
-                </h3>
-                <div className="mt-2 text-sm text-red-700">
-                  <p>We are currently updating our ordering system. Please check back in a few minutes.</p>
-                  <p className="mt-1">Thank you for your patience!</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-3xl font-serif font-bold text-organic-800">Your Cart</h1>
             <button
@@ -169,14 +170,15 @@ const Cart = () => {
                         </div>
                         <div className="flex items-center space-x-3">
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 0.5)}
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
+                            onClick={() => handleQuantityChange(item.id, item.quantity - 0.25)}
+                            disabled={item.quantity <= 0.25}
+                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Minus size={16} />
                           </button>
-                          <span className="w-8 text-center font-medium">{item.quantity}</span>
+                          <span className="w-12 text-center font-medium">{item.quantity} kg</span>
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 0.5)}
+                            onClick={() => handleQuantityChange(item.id, item.quantity + 0.25)}
                             className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 hover:bg-gray-100"
                           >
                             <Plus size={16} />
@@ -247,11 +249,11 @@ const Cart = () => {
                   </div>
 
                   <button
-                    onClick={() => toast.error("Ordering is temporarily disabled. Please try again later.")}
-                    className="btn-primary w-full flex items-center justify-center space-x-2 opacity-50 cursor-not-allowed"
-                    disabled={true}
+                    onClick={handleProceedToPayment}
+                    className="btn-primary w-full flex items-center justify-center space-x-2"
+                    disabled={isSubmitting}
                   >
-                    <span>Ordering Disabled</span>
+                    <span>Make Payment</span>
                     <ArrowRight size={20} />
                   </button>
                 </div>

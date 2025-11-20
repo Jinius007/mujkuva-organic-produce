@@ -59,10 +59,18 @@ const Footer = () => {
             <ul className="space-y-2">
               <li>
                 <Link 
-                  to="/produce/little-gourd"
+                  to="/produce/tindora"
                   className="text-organic-200 hover:text-white transition-colors"
                 >
-                  Little Gourd
+                  Tindora
+                </Link>
+              </li>
+              <li>
+                <Link 
+                  to="/produce/fresh-turmeric"
+                  className="text-organic-200 hover:text-white transition-colors"
+                >
+                  Fresh Turmeric
                 </Link>
               </li>
               <li>
@@ -70,15 +78,7 @@ const Footer = () => {
                   to="/produce"
                   className="text-organic-200 hover:text-white transition-colors"
                 >
-                  Seasonal Vegetables
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/produce"
-                  className="text-organic-200 hover:text-white transition-colors"
-                >
-                  Fruits
+                  View All Products
                 </Link>
               </li>
             </ul>

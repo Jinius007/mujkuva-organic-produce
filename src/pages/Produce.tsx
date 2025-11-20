@@ -16,44 +16,25 @@ interface Product {
   category: string;
 }
 
-// Force push commit - ensure GitHub sync
-// Updated produce list - removed bhindi/dudhi, added bajra/banana/galki
+// Updated produce list - Tindora and Fresh Turmeric only
 const products: Product[] = [
   {
-    id: "little-gourd",
-    name: "Little Gourd (Tindora)",
-    description: "Farm fresh, organically grown little gourd with exceptional taste and nutritional value.",
-    price: 80,
+    id: "tindora",
+    name: "Tindora",
+    description: "Farm fresh, organically grown tindora with exceptional taste and nutritional value. Minimum order: 250 gm.",
+    price: 100,
     unit: "kg",
     image: "/lovable-uploads/faf0beb0-6926-4c2d-a405-283f9c98c26b.png",
-    category: "Gourds"
+    category: "Vegetables"
   },
   {
-    id: "bajra",
-    name: "Bajra (Pearl Millet)",
-    description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking.",
-    price: 40,
+    id: "fresh-turmeric",
+    name: "Fresh Turmeric",
+    description: "Fresh organic turmeric, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    price: 120,
     unit: "kg",
-    image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
-    category: "Grains"
-  },
-  {
-    id: "banana",
-    name: "Banana",
-    description: "Fresh organic green bananas, naturally grown and packed with essential nutrients.",
-    price: 30,
-    unit: "kg",
-    image: "/lovable-uploads/WhatsApp Image 2025-09-03 at 09.34.58.jpeg",
-    category: "Fruits"
-  },
-  {
-    id: "galki",
-    name: "Galki (Sponge Gourd)",
-    description: "Fresh organic sponge gourd, healthy and versatile. Great for curries and soups.",
-    price: 50,
-    unit: "kg",
-    image: "/lovable-uploads/sponge gourd.PNG",
-    category: "Gourds"
+    image: "/lovable-uploads/e19656d6-a849-47ba-8795-7c1f88dd326d.png",
+    category: "Spices"
   }
 ];
 
@@ -105,9 +86,8 @@ const Produce = () => {
                   className="w-full py-3 px-4 rounded-full border border-gray-300 focus:ring-2 focus:ring-organic-500 focus:outline-none"
                 >
                   <option value="">All Categories</option>
-                  <option value="Gourds">Gourds</option>
-                  <option value="Grains">Grains</option>
-                  <option value="Fruits">Fruits</option>
+                  <option value="Vegetables">Vegetables</option>
+                  <option value="Spices">Spices</option>
                 </select>
               </div>
             </div>
