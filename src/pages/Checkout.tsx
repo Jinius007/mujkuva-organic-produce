@@ -44,7 +44,8 @@ const Checkout = () => {
       try {
         const parsed = JSON.parse(stored);
         console.log('✅ Checkout data loaded:', parsed);
-        console.log('   Reservation IDs:', parsed.reservationIds);
+        console.log('   Reservation IDs (order_slots):', parsed.reservationIds);
+        console.log('   Mujkuva Order IDs (mujkuva_organic_orders):', parsed.mujkuvaOrderIds);
         setCheckoutData(parsed);
       } catch (e) {
         console.error('❌ Failed to parse checkout data:', e);
