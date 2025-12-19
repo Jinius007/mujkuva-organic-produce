@@ -67,9 +67,19 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
   };
 
   const updateItem = (id: string, field: keyof WishlistItem, value: string | boolean) => {
-    setItems(items.map(item => 
-      item.id === id ? { ...item, [field]: value } : item
-    ));
+    setItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+  };
+
+  const updateItemMultiple = (id: string, updates: Partial<WishlistItem>) => {
+    setItems(prevItems => 
+      prevItems.map(item => 
+        item.id === id ? { ...item, ...updates } : item
+      )
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -236,32 +246,42 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                         )}
                       </div>
 
-                      <div className="flex gap-2">
+                      <div className="flex gap-4">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="radio"
+                            name={`produce-type-${item.id}`}
                             checked={!item.isCustom}
-                            onChange={() => {
-                              updateItem(item.id, "isCustom", false);
-                              updateItem(item.id, "produceName", "");
-                              updateItem(item.id, "produceValue", "");
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                updateItemMultiple(item.id, {
+                                  isCustom: false,
+                                  produceName: "",
+                                  produceValue: ""
+                                });
+                              }
                             }}
-                            className="text-organic-600"
+                            className="text-organic-600 cursor-pointer"
                           />
-                          <span className="text-sm">From List</span>
+                          <span className="text-sm cursor-pointer">From List</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                           <input
                             type="radio"
+                            name={`produce-type-${item.id}`}
                             checked={item.isCustom}
-                            onChange={() => {
-                              updateItem(item.id, "isCustom", true);
-                              updateItem(item.id, "produceName", "");
-                              updateItem(item.id, "produceValue", "");
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                updateItemMultiple(item.id, {
+                                  isCustom: true,
+                                  produceName: "",
+                                  produceValue: ""
+                                });
+                              }
                             }}
-                            className="text-organic-600"
+                            className="text-organic-600 cursor-pointer"
                           />
-                          <span className="text-sm">Others</span>
+                          <span className="text-sm cursor-pointer">Others</span>
                         </label>
                       </div>
 
@@ -272,20 +292,25 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                               Select Produce
                             </label>
                             <select
-                              value={item.produceValue}
+                              value={item.produceValue || ""}
                               onChange={(e) => {
-                                const selected = commonVegetables.find(v => v.value === e.target.value);
+                                const selectedValue = e.target.value;
+                                const selected = commonVegetables.find(v => v.value === selectedValue);
                                 if (selected) {
                                   // Store both the value (for dropdown) and English name (for database)
-                                  updateItem(item.id, "produceValue", selected.value);
-                                  updateItem(item.id, "produceName", selected.english);
-                                  updateItem(item.id, "language", "English"); // Default to English for dropdown selections
+                                  updateItemMultiple(item.id, {
+                                    produceValue: selected.value,
+                                    produceName: selected.english,
+                                    language: "English"
+                                  });
                                 } else {
-                                  updateItem(item.id, "produceValue", e.target.value);
-                                  updateItem(item.id, "produceName", e.target.value);
+                                  updateItemMultiple(item.id, {
+                                    produceValue: selectedValue,
+                                    produceName: selectedValue
+                                  });
                                 }
                               }}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-organic-500 focus:outline-none"
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-organic-500 focus:border-organic-500 focus:outline-none bg-white text-gray-900"
                               required={index === 0}
                             >
                               <option value="">Select a produce...</option>
@@ -295,6 +320,11 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                                 </option>
                               ))}
                             </select>
+                            {item.produceValue && (
+                              <p className="mt-2 text-sm text-organic-600 font-medium">
+                                Selected: {item.produceName}
+                              </p>
+                            )}
                           </div>
                         </>
                       ) : (
@@ -307,7 +337,7 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                               type="text"
                               value={item.produceName}
                               onChange={(e) => updateItem(item.id, "produceName", e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-organic-500 focus:outline-none"
+                              className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-organic-500 focus:border-organic-500 focus:outline-none"
                               placeholder="Enter produce name..."
                               required={index === 0}
                             />
