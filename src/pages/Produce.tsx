@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { useCart } from "@/contexts/CartContext";
 import { motion } from "framer-motion";
-import { Search, ArrowRight } from "lucide-react";
+import { Search, ArrowRight, Heart } from "lucide-react";
 import { toast } from "sonner";
+import WishlistModal from "@/components/WishlistModal";
 
 // Define product types
 interface Product {
@@ -59,6 +60,7 @@ const products: Product[] = [
 const Produce = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [isWishlistModalOpen, setIsWishlistModalOpen] = useState(false);
   const navigate = useNavigate();
   
   // Restore ordering functionality
@@ -174,6 +176,39 @@ const Produce = () => {
           </div>
         </div>
       </section>
+
+      {/* Wishlist Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              onClick={() => setIsWishlistModalOpen(true)}
+              className="bg-gradient-to-r from-organic-50 to-earth-50 rounded-xl p-8 cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-organic-200 hover:border-organic-400"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 bg-organic-100 rounded-full flex items-center justify-center">
+                    <Heart className="text-organic-600" size={32} />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-serif font-bold text-organic-800 mb-2">
+                      What are you looking for?
+                    </h2>
+                    <p className="text-gray-600">
+                      Please enter the produce that you would like to purchase in the future
+                    </p>
+                  </div>
+                </div>
+                <ArrowRight className="text-organic-600" size={24} />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
       
       {/* Ordering Information */}
       <section className="py-16 bg-organic-50">
@@ -227,6 +262,12 @@ const Produce = () => {
           </div>
         </div>
       </section>
+
+      {/* Wishlist Modal */}
+      <WishlistModal 
+        isOpen={isWishlistModalOpen} 
+        onClose={() => setIsWishlistModalOpen(false)} 
+      />
     </div>
   );
 };
