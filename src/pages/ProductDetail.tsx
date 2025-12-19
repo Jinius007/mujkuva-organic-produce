@@ -83,6 +83,27 @@ const productsData: Record<string, Product> = {
       "Promotes brain health",
       "Supports heart health and digestion"
     ]
+  },
+  "tomato": {
+    id: "tomato",
+    name: "Tomato",
+    description: "Fresh organic tomatoes, naturally ripened and packed with flavor and essential nutrients. Minimum order: 250 gm.",
+    detailedDescription: "Our organic tomatoes are grown using sustainable farming practices without synthetic pesticides or fertilizers. Each tomato is harvested at peak ripeness to ensure maximum flavor and nutritional value. Rich in lycopene and other antioxidants, our tomatoes are perfect for salads, cooking, and fresh consumption.",
+    price: 80,
+    unit: "kg",
+    image: "/lovable-uploads/Tamatar.PNG",
+    nutritionalInfo: [
+      "Rich in lycopene (powerful antioxidant)",
+      "High in vitamins C and K",
+      "Good source of potassium and folate",
+      "Low in calories and carbohydrates"
+    ],
+    benefits: [
+      "Supports heart health",
+      "May help reduce cancer risk",
+      "Promotes healthy skin",
+      "Aids in maintaining healthy vision"
+    ]
   }
 };
 

@@ -44,6 +44,15 @@ const products: Product[] = [
     unit: "kg",
     image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
     category: "Spices"
+  },
+  {
+    id: "tomato",
+    name: "Tomato",
+    description: "Fresh organic tomatoes, naturally ripened and packed with flavor and essential nutrients. Minimum order: 250 gm.",
+    price: 80,
+    unit: "kg",
+    image: "/lovable-uploads/Tamatar.PNG",
+    category: "Vegetables"
   }
 ];
 
