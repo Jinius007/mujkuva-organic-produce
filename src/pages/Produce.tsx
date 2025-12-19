@@ -17,17 +17,8 @@ interface Product {
   category: string;
 }
 
-// Updated produce list - Tindora, Bajra, and Fresh Turmeric
+// Updated produce list - Bajra, Fresh Turmeric, and Tomato
 const products: Product[] = [
-  {
-    id: "tindora",
-    name: "Tindora",
-    description: "Farm fresh, organically grown tindora with exceptional taste and nutritional value. Minimum order: 250 gm.",
-    price: 100,
-    unit: "kg",
-    image: "/lovable-uploads/faf0beb0-6926-4c2d-a405-283f9c98c26b.png",
-    category: "Vegetables"
-  },
   {
     id: "bajra",
     name: "Bajra (Pearl Millet)",

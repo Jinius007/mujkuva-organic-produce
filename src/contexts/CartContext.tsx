@@ -12,9 +12,9 @@ export interface CartItem {
 
 // Stock limits for the current batch
 const STOCK_LIMITS = {
-  'tindora': 40, // 40 kg
   'bajra': 100, // 100 kg
   'fresh-turmeric': 40, // 40 kg
+  'tomato': 50, // 50 kg
 };
 
 const ORDER_DATE_START = '2025-07-26';

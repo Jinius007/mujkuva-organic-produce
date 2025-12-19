@@ -21,27 +21,6 @@ interface Product {
 
 // Sample product data
 const productsData: Record<string, Product> = {
-  "tindora": {
-    id: "tindora",
-    name: "Tindora",
-    description: "Farm fresh, organically grown tindora with exceptional taste and nutritional value. Minimum order: 250 gm.",
-    detailedDescription: "Our tindora is grown using organic farming practices, free from synthetic pesticides and fertilizers. Each piece is harvested at the perfect stage of ripeness to ensure optimal flavor and nutritional content. Tindora is known for its distinctive taste and numerous health benefits.",
-    price: 100,
-    unit: "kg",
-    image: "/lovable-uploads/faf0beb0-6926-4c2d-a405-283f9c98c26b.png",
-    nutritionalInfo: [
-      "Rich in vitamins A and C",
-      "Good source of dietary fiber",
-      "Contains essential minerals like potassium and magnesium",
-      "Low in calories and carbohydrates"
-    ],
-    benefits: [
-      "Supports immune function",
-      "Aids in digestion",
-      "Helps manage blood sugar levels",
-      "Contributes to heart health"
-    ]
-  },
   "bajra": {
     id: "bajra",
     name: "Bajra (Pearl Millet)",
