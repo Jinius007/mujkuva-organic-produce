@@ -178,7 +178,7 @@ const Produce = () => {
       </section>
 
       {/* Wishlist Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-gradient-to-br from-organic-100 via-yellow-50 to-orange-50">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <motion.div
@@ -187,23 +187,28 @@ const Produce = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
               onClick={() => setIsWishlistModalOpen(true)}
-              className="bg-gradient-to-r from-organic-50 to-earth-50 rounded-xl p-8 cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-organic-200 hover:border-organic-400"
+              className="bg-gradient-to-r from-organic-400 via-organic-500 to-orange-500 rounded-2xl p-8 cursor-pointer hover:shadow-2xl transition-all duration-300 border-4 border-white hover:scale-105 transform"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 bg-organic-100 rounded-full flex items-center justify-center">
-                    <Heart className="text-organic-600" size={32} />
+                <div className="flex items-center gap-6">
+                  <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                    <Heart className="text-organic-600" size={40} fill="currentColor" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-serif font-bold text-organic-800 mb-2">
+                    <h2 className="text-3xl font-serif font-bold text-white mb-2 drop-shadow-lg">
                       What are you looking for?
                     </h2>
-                    <p className="text-gray-600">
+                    <p className="text-white/90 text-lg font-medium">
                       Please enter the produce that you would like to purchase in the future
                     </p>
                   </div>
                 </div>
-                <ArrowRight className="text-organic-600" size={24} />
+                <div className="bg-white rounded-full p-4 shadow-lg hover:scale-110 transition-transform">
+                  <ArrowRight className="text-organic-600" size={28} />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-white/90">
+                <span className="text-sm font-semibold">Click here to add your wishlist →</span>
               </div>
             </motion.div>
           </div>

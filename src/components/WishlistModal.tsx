@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface WishlistItem {
   id: string;
   produceName: string;
+  produceValue: string; // Store the value for dropdown matching
   language: string;
   isCustom: boolean;
 }
@@ -48,7 +49,7 @@ const commonVegetables = [
 
 const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
   const [items, setItems] = useState<WishlistItem[]>([
-    { id: crypto.randomUUID(), produceName: "", language: "English", isCustom: false }
+    { id: crypto.randomUUID(), produceName: "", produceValue: "", language: "English", isCustom: false }
   ]);
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -56,7 +57,7 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const addItem = () => {
-    setItems([...items, { id: crypto.randomUUID(), produceName: "", language: "English", isCustom: false }]);
+    setItems([...items, { id: crypto.randomUUID(), produceName: "", produceValue: "", language: "English", isCustom: false }]);
   };
 
   const removeItem = (id: string) => {
@@ -87,7 +88,7 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
       // Insert each wishlist item separately
       const insertPromises = validItems.map(item => 
         supabase
-          .from('ConsumerWishlist')
+          .from('consumer_wishlist')
           .insert({
             produce_name: item.produceName.trim(),
             language: item.language,
@@ -108,7 +109,7 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
       }
 
       // Reset form
-      setItems([{ id: crypto.randomUUID(), produceName: "", language: "English", isCustom: false }]);
+      setItems([{ id: crypto.randomUUID(), produceName: "", produceValue: "", language: "English", isCustom: false }]);
       setCustomerName("");
       setCustomerPhone("");
       setCustomerEmail("");
@@ -240,7 +241,11 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                           <input
                             type="radio"
                             checked={!item.isCustom}
-                            onChange={() => updateItem(item.id, "isCustom", false)}
+                            onChange={() => {
+                              updateItem(item.id, "isCustom", false);
+                              updateItem(item.id, "produceName", "");
+                              updateItem(item.id, "produceValue", "");
+                            }}
                             className="text-organic-600"
                           />
                           <span className="text-sm">From List</span>
@@ -249,7 +254,11 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                           <input
                             type="radio"
                             checked={item.isCustom}
-                            onChange={() => updateItem(item.id, "isCustom", true)}
+                            onChange={() => {
+                              updateItem(item.id, "isCustom", true);
+                              updateItem(item.id, "produceName", "");
+                              updateItem(item.id, "produceValue", "");
+                            }}
                             className="text-organic-600"
                           />
                           <span className="text-sm">Others</span>
@@ -263,14 +272,16 @@ const WishlistModal = ({ isOpen, onClose }: WishlistModalProps) => {
                               Select Produce
                             </label>
                             <select
-                              value={commonVegetables.find(v => v.value === item.produceName)?.value || ""}
+                              value={item.produceValue}
                               onChange={(e) => {
                                 const selected = commonVegetables.find(v => v.value === e.target.value);
                                 if (selected) {
-                                  // Store the English name as the primary name
+                                  // Store both the value (for dropdown) and English name (for database)
+                                  updateItem(item.id, "produceValue", selected.value);
                                   updateItem(item.id, "produceName", selected.english);
                                   updateItem(item.id, "language", "English"); // Default to English for dropdown selections
                                 } else {
+                                  updateItem(item.id, "produceValue", e.target.value);
                                   updateItem(item.id, "produceName", e.target.value);
                                 }
                               }}
