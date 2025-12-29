@@ -45,6 +45,24 @@ const products: Product[] = [
     unit: "kg",
     image: "/lovable-uploads/Tamatar.PNG",
     category: "Vegetables"
+  },
+  {
+    id: "brinjal",
+    name: "Brinjal",
+    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/brinjal.PNG",
+    category: "Vegetables"
+  },
+  {
+    id: "methi",
+    name: "Methi",
+    description: "Fresh organic methi (fenugreek leaves), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    price: 80,
+    unit: "kg",
+    image: "/lovable-uploads/methi.PNG",
+    category: "Vegetables"
   }
 ];
 

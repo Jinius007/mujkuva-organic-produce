@@ -83,6 +83,48 @@ const productsData: Record<string, Product> = {
       "Promotes healthy skin",
       "Aids in maintaining healthy vision"
     ]
+  },
+  "brinjal": {
+    id: "brinjal",
+    name: "Brinjal",
+    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    detailedDescription: "Our organic brinjal is cultivated using traditional farming methods without any chemical inputs. Rich in antioxidants and fiber, brinjal is a versatile vegetable that can be used in various traditional and modern dishes. It's known for its unique texture and ability to absorb flavors, making it perfect for curries, stir-fries, and grilled dishes.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/brinjal.PNG",
+    nutritionalInfo: [
+      "High in dietary fiber",
+      "Rich in antioxidants (especially nasunin)",
+      "Good source of vitamins B1, B6, and K",
+      "Contains essential minerals like potassium and manganese"
+    ],
+    benefits: [
+      "Supports heart health",
+      "May help control blood sugar levels",
+      "Promotes digestive health",
+      "Rich in antioxidants that protect cells"
+    ]
+  },
+  "methi": {
+    id: "methi",
+    name: "Methi",
+    description: "Fresh organic methi (fenugreek leaves), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    detailedDescription: "Our organic methi is grown using sustainable farming practices without synthetic pesticides or fertilizers. Methi leaves are highly nutritious and are a staple in Indian cuisine. Known for their slightly bitter taste and numerous health benefits, methi leaves are perfect for adding to curries, parathas, and other traditional dishes.",
+    price: 80,
+    unit: "kg",
+    image: "/lovable-uploads/methi.PNG",
+    nutritionalInfo: [
+      "High in dietary fiber",
+      "Rich in vitamins A, C, and K",
+      "Good source of iron, calcium, and magnesium",
+      "Contains protein and folic acid"
+    ],
+    benefits: [
+      "May help control blood sugar levels",
+      "Supports digestive health",
+      "Rich in iron, helps prevent anemia",
+      "May aid in reducing cholesterol levels"
+    ]
   }
 };
 
