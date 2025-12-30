@@ -125,6 +125,27 @@ const productsData: Record<string, Product> = {
       "Rich in iron, helps prevent anemia",
       "May aid in reducing cholesterol levels"
     ]
+  },
+  "spinach": {
+    id: "spinach",
+    name: "Spinach",
+    description: "Fresh organic spinach, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    detailedDescription: "Our organic spinach is grown using sustainable farming practices without synthetic pesticides or fertilizers. Spinach is a nutrient-dense leafy green vegetable that is rich in vitamins, minerals, and antioxidants. Known for its mild flavor and versatility, spinach is perfect for salads, smoothies, curries, and various cooked dishes.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/spinach.PNG",
+    nutritionalInfo: [
+      "Extremely high in vitamins A, C, and K",
+      "Rich in iron, calcium, and magnesium",
+      "Good source of folate and antioxidants",
+      "High in dietary fiber and low in calories"
+    ],
+    benefits: [
+      "Supports eye health and vision",
+      "Rich in iron, helps prevent anemia",
+      "Promotes bone health",
+      "May help reduce inflammation and support heart health"
+    ]
   }
 };
 

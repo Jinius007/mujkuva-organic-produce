@@ -17,6 +17,7 @@ const STOCK_LIMITS = {
   'tomato': 50, // 50 kg
   'brinjal': 50, // 50 kg
   'methi': 30, // 30 kg
+  'spinach': 40, // 40 kg
 };
 
 const ORDER_DATE_START = '2025-07-26';

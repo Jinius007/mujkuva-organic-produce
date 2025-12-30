@@ -63,6 +63,15 @@ const products: Product[] = [
     unit: "kg",
     image: "/lovable-uploads/methi.PNG",
     category: "Vegetables"
+  },
+  {
+    id: "spinach",
+    name: "Spinach",
+    description: "Fresh organic spinach, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/spinach.PNG",
+    category: "Vegetables"
   }
 ];
 
