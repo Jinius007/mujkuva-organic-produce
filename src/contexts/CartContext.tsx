@@ -14,7 +14,7 @@ export interface CartItem {
 const STOCK_LIMITS = {
   'bajra': 100, // 100 kg
   'fresh-turmeric': 40, // 40 kg
-  'tomato': 50, // 50 kg
+  'green-onion': 50, // 50 kg
   'brinjal': 50, // 50 kg
   'methi': 30, // 30 kg
   'spinach': 40, // 40 kg

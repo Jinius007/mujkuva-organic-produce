@@ -38,12 +38,12 @@ const products: Product[] = [
     category: "Spices"
   },
   {
-    id: "tomato",
-    name: "Tomato",
-    description: "Fresh organic tomatoes, naturally ripened and packed with flavor and essential nutrients. Minimum order: 250 gm.",
+    id: "green-onion",
+    name: "Green Onion/Spring Onion",
+    description: "Fresh organic green onion (spring onion), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
     price: 80,
     unit: "kg",
-    image: "/lovable-uploads/Tamatar.PNG",
+    image: "/lovable-uploads/green onion.jpeg",
     category: "Vegetables"
   },
   {

@@ -63,25 +63,25 @@ const productsData: Record<string, Product> = {
       "Supports heart health and digestion"
     ]
   },
-  "tomato": {
-    id: "tomato",
-    name: "Tomato",
-    description: "Fresh organic tomatoes, naturally ripened and packed with flavor and essential nutrients. Minimum order: 250 gm.",
-    detailedDescription: "Our organic tomatoes are grown using sustainable farming practices without synthetic pesticides or fertilizers. Each tomato is harvested at peak ripeness to ensure maximum flavor and nutritional value. Rich in lycopene and other antioxidants, our tomatoes are perfect for salads, cooking, and fresh consumption.",
+  "green-onion": {
+    id: "green-onion",
+    name: "Green Onion/Spring Onion",
+    description: "Fresh organic green onion (spring onion), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    detailedDescription: "Our organic green onions (spring onions) are grown using sustainable farming practices without synthetic pesticides or fertilizers. Green onions are a versatile vegetable with a mild, slightly sweet flavor that adds freshness to any dish. Rich in vitamins and antioxidants, they are perfect for garnishing, salads, stir-fries, and various culinary preparations.",
     price: 80,
     unit: "kg",
-    image: "/lovable-uploads/Tamatar.PNG",
+    image: "/lovable-uploads/green onion.jpeg",
     nutritionalInfo: [
-      "Rich in lycopene (powerful antioxidant)",
-      "High in vitamins C and K",
-      "Good source of potassium and folate",
-      "Low in calories and carbohydrates"
+      "High in vitamins A, C, and K",
+      "Rich in antioxidants (quercetin and allicin)",
+      "Good source of folate and fiber",
+      "Contains essential minerals like potassium and calcium"
     ],
     benefits: [
-      "Supports heart health",
-      "May help reduce cancer risk",
-      "Promotes healthy skin",
-      "Aids in maintaining healthy vision"
+      "Supports immune function",
+      "May help reduce inflammation",
+      "Promotes heart health",
+      "Aids in maintaining healthy bones and vision"
     ]
   },
   "brinjal": {
