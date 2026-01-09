@@ -146,6 +146,27 @@ const productsData: Record<string, Product> = {
       "Promotes bone health",
       "May help reduce inflammation and support heart health"
     ]
+  },
+  "radish": {
+    id: "radish",
+    name: "Radish",
+    description: "Fresh organic radish, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    detailedDescription: "Our organic radish is grown using sustainable farming practices without synthetic pesticides or fertilizers. Radish is a crisp, refreshing root vegetable that adds a peppery flavor to dishes. Rich in vitamins and minerals, radish is perfect for salads, pickles, curries, and various culinary preparations.",
+    price: 50,
+    unit: "kg",
+    image: "/lovable-uploads/radish.PNG",
+    nutritionalInfo: [
+      "High in vitamin C and antioxidants",
+      "Rich in fiber and water content",
+      "Good source of potassium and folate",
+      "Contains essential minerals like calcium and magnesium"
+    ],
+    benefits: [
+      "Supports immune function",
+      "Aids in digestion and promotes gut health",
+      "May help maintain healthy blood pressure",
+      "Low in calories, supports weight management"
+    ]
   }
 };
 

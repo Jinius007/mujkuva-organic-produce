@@ -72,6 +72,15 @@ const products: Product[] = [
     unit: "kg",
     image: "/lovable-uploads/spinach.PNG",
     category: "Vegetables"
+  },
+  {
+    id: "radish",
+    name: "Radish",
+    description: "Fresh organic radish, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    price: 50,
+    unit: "kg",
+    image: "/lovable-uploads/radish.PNG",
+    category: "Vegetables"
   }
 ];
 
