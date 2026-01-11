@@ -28,6 +28,15 @@ const products: Product[] = [
     image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
     category: "Grains"
   },
+   {
+    id: "green-garlic",
+    name: "Green Garlic",
+    description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
+    price: 120,
+    unit: "kg",
+    image: "/lovable-uploads/green garlic.png",
+    category: "Vegetables"
+  },
   {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",

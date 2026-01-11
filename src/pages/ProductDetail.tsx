@@ -42,6 +42,27 @@ const productsData: Record<string, Product> = {
       "Boosts energy levels"
     ]
   },
+  "green-garlic": {
+    id: "green-garlic",
+    name: "Green Garlic",
+    description: "Fresh organic green garlic with mild flavor, perfect for winter seasoning. Minimum order: 250 gm.",
+    detailedDescription: "Our organic green garlic is harvested young to provide a fresh, mild garlic flavor that is less pungent than mature bulbs. Grown without synthetic pesticides, it is an essential winter ingredient for curries, chutneys, and parathas.",
+    price: 120,
+    unit: "kg",
+    image: "/lovable-uploads/green garlic.png", 
+    nutritionalInfo: [
+      "Rich in Allicin (powerful antioxidant)",
+      "High in Vitamin C",
+      "Contains Iron and Manganese",
+      "Good source of Vitamin B6"
+    ],
+    benefits: [
+      "Boosts immune system",
+      "Natural antibiotic properties",
+      "Promotes heart health",
+      "Helps improve blood circulation"
+    ]
+  },
   "fresh-turmeric": {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
