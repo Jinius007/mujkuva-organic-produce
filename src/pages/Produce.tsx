@@ -34,7 +34,7 @@ const products: Product[] = [
     description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
     price: 120,
     unit: "kg",
-    image: "/lovable-uploads/green garlic.png",
+    image: "/lovable-uploads/green garlic.PNG",
     category: "Vegetables"
   },
   {
