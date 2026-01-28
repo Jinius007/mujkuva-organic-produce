@@ -19,24 +19,24 @@ interface Product {
 
 // Updated produce list - Bajra, Fresh Turmeric, and Tomato
 const products: Product[] = [
-  {
-    id: "bajra",
-    name: "Bajra (Pearl Millet)",
-    description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
-    price: 40,
-    unit: "kg",
-    image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
-    category: "Grains"
-  },
-   {
-    id: "green-garlic",
-    name: "Green Garlic",
-    description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
-    price: 120,
-    unit: "kg",
-    image: "/lovable-uploads/green garlic.PNG",
-    category: "Vegetables"
-  },
+  //{
+   // id: "bajra",
+    //name: "Bajra (Pearl Millet)",
+    //description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
+    //price: 40,
+    //unit: "kg",
+    //image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
+    //category: "Grains"
+  //},
+   //{
+    //id: "green-garlic",
+    //name: "Green Garlic",
+    //description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
+    //price: 120,
+    //unit: "kg",
+    //image: "/lovable-uploads/green garlic.PNG",
+    //category: "Vegetables"
+  //},
   {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
@@ -46,15 +46,15 @@ const products: Product[] = [
     image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
     category: "Spices"
   },
-  {
-    id: "green-onion",
-    name: "Green Onion/Spring Onion",
-    description: "Fresh organic green onion (spring onion), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 80,
-    unit: "kg",
-    image: "/lovable-uploads/green onion.jpeg",
-    category: "Vegetables"
-  },
+  //{
+    //id: "green-onion",
+   // name: "Green Onion/Spring Onion",
+    //description: "Fresh organic green onion (spring onion), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    //price: 80,
+    //unit: "kg",
+    //image: "/lovable-uploads/green onion.jpeg",
+    //category: "Vegetables"
+  //},
   {
     id: "brinjal",
     name: "Brinjal",
@@ -64,15 +64,15 @@ const products: Product[] = [
     image: "/lovable-uploads/brinjal.PNG",
     category: "Vegetables"
   },
-  {
-    id: "methi",
-    name: "Methi",
-    description: "Fresh organic methi (fenugreek leaves), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 80,
-    unit: "kg",
-    image: "/lovable-uploads/methi.PNG",
-    category: "Vegetables"
-  },
+ // {
+   // id: "methi",
+    //name: "Methi",
+    //description: "Fresh organic methi (fenugreek leaves), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    //price: 80,
+    //unit: "kg",
+    //image: "/lovable-uploads/methi.PNG",
+    //category: "Vegetables"
+  //},
   {
     id: "spinach",
     name: "Spinach",
@@ -82,15 +82,15 @@ const products: Product[] = [
     image: "/lovable-uploads/spinach.PNG",
     category: "Vegetables"
   },
-  {
-    id: "radish",
-    name: "Radish",
-    description: "Fresh organic radish, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 50,
-    unit: "kg",
-    image: "/lovable-uploads/radish.PNG",
-    category: "Vegetables"
-  }
+  //{
+    //id: "radish",
+    //name: "Radish",
+    //description: "Fresh organic radish, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    //price: 50,
+    //unit: "kg",
+    //image: "/lovable-uploads/radish.PNG",
+    //category: "Vegetables"
+  //}
 ];
 
 const Produce = () => {
