@@ -64,7 +64,7 @@ const productsData: Record<string, Product> = {
     ]
   },
 
-  "brinjal-doli": {
+  "brinjal_doli": {
     id: "brinjal_doli",
     name: "Brinjal (Doli Variety)",
     description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
@@ -86,7 +86,7 @@ const productsData: Record<string, Product> = {
     ]
   },
 
-  "brinjal-bharuchi": {
+  "brinjal_bharuchi": {
     id: "brinjal_bharuchi",
     name: "Brinjal (Bharuchi Variety)",
     description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
