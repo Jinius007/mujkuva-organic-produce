@@ -28,15 +28,15 @@ const products: Product[] = [
     //image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
     //category: "Grains"
   //},
-   //{
-    //id: "green-garlic",
-    //name: "Green Garlic",
-    //description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
-    //price: 120,
-    //unit: "kg",
-    //image: "/lovable-uploads/green garlic.PNG",
-    //category: "Vegetables"
-  //},
+   {
+    id: "green-garlic",
+    name: "Green Garlic",
+    description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
+    price: 120,
+    unit: "kg",
+    image: "/lovable-uploads/green garlic.PNG",
+    category: "Vegetables"
+  },
   {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
@@ -56,12 +56,21 @@ const products: Product[] = [
     //category: "Vegetables"
   //},
   {
-    id: "brinjal",
-    name: "Brinjal",
+    id: "brinjal_doli",
+    name: "Brinjal (Doli Variety)",
     description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
     price: 60,
     unit: "kg",
-    image: "/lovable-uploads/brinjal.PNG",
+    image: "/lovable-uploads/Brinjal_Doli Variety.PNG",
+    category: "Vegetables"
+  },
+  {
+    id: "brinjal_bharuchi",
+    name: "Brinjal (Bharuchi Variety)",
+    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/Brinjal_Bharuchi Variety.PNG",
     category: "Vegetables"
   },
  // {
@@ -73,15 +82,15 @@ const products: Product[] = [
     //image: "/lovable-uploads/methi.PNG",
     //category: "Vegetables"
   //},
-  {
-    id: "spinach",
-    name: "Spinach",
-    description: "Fresh organic spinach, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/spinach.PNG",
-    category: "Vegetables"
-  },
+  //{
+    //id: "spinach",
+    //name: "Spinach",
+    //description: "Fresh organic spinach, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    //price: 60,
+    //unit: "kg",
+    //image: "/lovable-uploads/spinach.PNG",
+    //category: "Vegetables"
+  //},
   //{
     //id: "radish",
     //name: "Radish",

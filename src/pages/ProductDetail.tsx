@@ -1,8 +1,7 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Minus, Plus, Award, Leaf, ShoppingBag, ShoppingCart, X } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/contexts/CartContext";
 
@@ -19,50 +18,30 @@ interface Product {
   benefits: string[];
 }
 
-// Sample product data
+// Sample product data (only the products currently sold on site)
 const productsData: Record<string, Product> = {
-  //"bajra": {
-    //id: "bajra",
-    //name: "Bajra (Pearl Millet)",
-    //description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
-    //detailedDescription: "Our organic bajra is grown without synthetic pesticides or fertilizers, ensuring the highest quality and taste. Rich in nutrients and with a unique texture, bajra is perfect for various traditional dishes and provides numerous health benefits.",
-    //price: 40,
-    //unit: "kg",
-    //image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
-    //nutritionalInfo: [
-      //"High in dietary fiber",
-      //"Rich in B vitamins",
-      //"Contains essential minerals like iron and magnesium",
-      //"Good source of protein"
-    //],
-    //benefits: [
-      //"Supports digestive health",
-      //"May help control blood sugar",
-      //"Promotes heart health",
-      //"Boosts energy levels"
-    //]
-  //},
-  //"green-garlic": {
-    //id: "green-garlic",
-    //name: "Green Garlic",
-    //description: "Fresh organic green garlic with mild flavor, perfect for winter seasoning. Minimum order: 250 gm.",
-    //detailedDescription: "Our organic green garlic is harvested young to provide a fresh, mild garlic flavor that is less pungent than mature bulbs. Grown without synthetic pesticides, it is an essential winter ingredient for curries, chutneys, and parathas.",
-    //price: 120,
-    //unit: "kg",
-    //image: "/lovable-uploads/green garlic.PNG", 
-    //nutritionalInfo: [
-      //"Rich in Allicin (powerful antioxidant)",
-      //"High in Vitamin C",
-      //"Contains Iron and Manganese",
-      //"Good source of Vitamin B6"
-    //],
-    //benefits: [
-      //"Boosts immune system",
-      //"Natural antibiotic properties",
-      //"Promotes heart health",
-      //"Helps improve blood circulation"
-    //]
-  //},
+  "green-garlic": {
+    id: "green-garlic",
+    name: "Green Garlic",
+    description: "Fresh organic green garlic with mild flavor, perfect for winter seasoning. Minimum order: 250 gm.",
+    detailedDescription: "Our organic green garlic is harvested young to provide a fresh, mild garlic flavor that is less pungent than mature bulbs. Grown without synthetic pesticides, it is an essential winter ingredient for curries, chutneys, and parathas.",
+    price: 120,
+    unit: "kg",
+    image: "/lovable-uploads/green garlic.PNG",
+    nutritionalInfo: [
+      "Rich in Allicin (powerful antioxidant)",
+      "High in Vitamin C",
+      "Contains Iron and Manganese",
+      "Good source of Vitamin B6"
+    ],
+    benefits: [
+      "Boosts immune system",
+      "Natural antibiotic properties",
+      "Promotes heart health",
+      "Helps improve blood circulation"
+    ]
+  },
+
   "fresh-turmeric": {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
@@ -84,35 +63,15 @@ const productsData: Record<string, Product> = {
       "Supports heart health and digestion"
     ]
   },
-  //"green-onion": {
-    //id: "green-onion",
-    //name: "Green Onion/Spring Onion",
-    //description: "Fresh organic green onion (spring onion), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //detailedDescription: "Our organic green onions (spring onions) are grown using sustainable farming practices without synthetic pesticides or fertilizers. Green onions are a versatile vegetable with a mild, slightly sweet flavor that adds freshness to any dish. Rich in vitamins and antioxidants, they are perfect for garnishing, salads, stir-fries, and various culinary preparations.",
-    //price: 80,
-    //unit: "kg",
-    //image: "/lovable-uploads/green onion.jpeg",
-    //nutritionalInfo: [
-      //"High in vitamins A, C, and K",
-      //"Rich in antioxidants (quercetin and allicin)",
-      //"Good source of folate and fiber",
-      //"Contains essential minerals like potassium and calcium"
-    //],
-    //benefits: [
-      //"Supports immune function",
-      //"May help reduce inflammation",
-      //"Promotes heart health",
-      //"Aids in maintaining healthy bones and vision"
-    //]
-  //},
-  "brinjal": {
-    id: "brinjal",
-    name: "Brinjal",
+
+  "brinjal-doli": {
+    id: "brinjal_doli",
+    name: "Brinjal (Doli Variety)",
     description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
     detailedDescription: "Our organic brinjal is cultivated using traditional farming methods without any chemical inputs. Rich in antioxidants and fiber, brinjal is a versatile vegetable that can be used in various traditional and modern dishes. It's known for its unique texture and ability to absorb flavors, making it perfect for curries, stir-fries, and grilled dishes.",
     price: 60,
     unit: "kg",
-    image: "/lovable-uploads/brinjal.PNG",
+    image: "/lovable-uploads/Brinjal_Doli Variety.PNG",
     nutritionalInfo: [
       "High in dietary fiber",
       "Rich in antioxidants (especially nasunin)",
@@ -126,69 +85,28 @@ const productsData: Record<string, Product> = {
       "Rich in antioxidants that protect cells"
     ]
   },
-  //"methi": {
-    //id: "methi",
-    //name: "Methi",
-    //description: "Fresh organic methi (fenugreek leaves), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //detailedDescription: "Our organic methi is grown using sustainable farming practices without synthetic pesticides or fertilizers. Methi leaves are highly nutritious and are a staple in Indian cuisine. Known for their slightly bitter taste and numerous health benefits, methi leaves are perfect for adding to curries, parathas, and other traditional dishes.",
-    //price: 80,
-    //unit: "kg",
-    //image: "/lovable-uploads/methi.PNG",
-    //nutritionalInfo: [
-      //"High in dietary fiber",
-      //"Rich in vitamins A, C, and K",
-      //"Good source of iron, calcium, and magnesium",
-      //"Contains protein and folic acid"
-    //],
-    //benefits: [
-      //"May help control blood sugar levels",
-      //"Supports digestive health",
-      //"Rich in iron, helps prevent anemia",
-      //"May aid in reducing cholesterol levels"
-   // ]
-  //},
-  "spinach": {
-    id: "spinach",
-    name: "Spinach",
-    description: "Fresh organic spinach, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    detailedDescription: "Our organic spinach is grown using sustainable farming practices without synthetic pesticides or fertilizers. Spinach is a nutrient-dense leafy green vegetable that is rich in vitamins, minerals, and antioxidants. Known for its mild flavor and versatility, spinach is perfect for salads, smoothies, curries, and various cooked dishes.",
+
+  "brinjal-bharuchi": {
+    id: "brinjal_bharuchi",
+    name: "Brinjal (Bharuchi Variety)",
+    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
+    detailedDescription: "Our organic brinjal is cultivated using traditional farming methods without any chemical inputs. Rich in antioxidants and fiber, brinjal is a versatile vegetable that can be used in various traditional and modern dishes. It's known for its unique texture and ability to absorb flavors, making it perfect for curries, stir-fries, and grilled dishes.",
     price: 60,
     unit: "kg",
-    image: "/lovable-uploads/spinach.PNG",
+    image: "/lovable-uploads/Brinjal_Bharuchi Variety.PNG",
     nutritionalInfo: [
-      "Extremely high in vitamins A, C, and K",
-      "Rich in iron, calcium, and magnesium",
-      "Good source of folate and antioxidants",
-      "High in dietary fiber and low in calories"
+      "High in dietary fiber",
+      "Rich in antioxidants (especially nasunin)",
+      "Good source of vitamins B1, B6, and K",
+      "Contains essential minerals like potassium and manganese"
     ],
     benefits: [
-      "Supports eye health and vision",
-      "Rich in iron, helps prevent anemia",
-      "Promotes bone health",
-      "May help reduce inflammation and support heart health"
+      "Supports heart health",
+      "May help control blood sugar levels",
+      "Promotes digestive health",
+      "Rich in antioxidants that protect cells"
     ]
-  },
-  //"radish": {
-    //id: "radish",
-    //name: "Radish",
-    //description: "Fresh organic radish, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //detailedDescription: "Our organic radish is grown using sustainable farming practices without synthetic pesticides or fertilizers. Radish is a crisp, refreshing root vegetable that adds a peppery flavor to dishes. Rich in vitamins and minerals, radish is perfect for salads, pickles, curries, and various culinary preparations.",
-    //price: 50,
-    //unit: "kg",
-    //image: "/lovable-uploads/radish.PNG",
-    //nutritionalInfo: [
-      //"High in vitamin C and antioxidants",
-      //"Rich in fiber and water content",
-      //"Good source of potassium and folate",
-      //"Contains essential minerals like calcium and magnesium"
-    //],
-    //benefits: [
-      //"Supports immune function",
-      //"Aids in digestion and promotes gut health",
-      //"May help maintain healthy blood pressure",
-      //"Low in calories, supports weight management"
-    //]
-  //}
+  }
 };
 
 const ProductDetail = () => {
