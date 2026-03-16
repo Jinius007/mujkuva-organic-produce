@@ -20,28 +20,6 @@ interface Product {
 
 // Sample product data (only the products currently sold on site)
 const productsData: Record<string, Product> = {
-  "green-garlic": {
-    id: "green-garlic",
-    name: "Green Garlic",
-    description: "Fresh organic green garlic with mild flavor, perfect for winter seasoning. Minimum order: 250 gm.",
-    detailedDescription: "Our organic green garlic is harvested young to provide a fresh, mild garlic flavor that is less pungent than mature bulbs. Grown without synthetic pesticides, it is an essential winter ingredient for curries, chutneys, and parathas.",
-    price: 120,
-    unit: "kg",
-    image: "/lovable-uploads/green garlic.PNG",
-    nutritionalInfo: [
-      "Rich in Allicin (powerful antioxidant)",
-      "High in Vitamin C",
-      "Contains Iron and Manganese",
-      "Good source of Vitamin B6"
-    ],
-    benefits: [
-      "Boosts immune system",
-      "Natural antibiotic properties",
-      "Promotes heart health",
-      "Helps improve blood circulation"
-    ]
-  },
-
   "fresh-turmeric": {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
@@ -61,6 +39,28 @@ const productsData: Record<string, Product> = {
       "Aids in reducing inflammation",
       "Promotes brain health",
       "Supports heart health and digestion"
+    ]
+  },
+
+  "bottle-gourd": {
+    id: "bottle-gourd",
+    name: "Bottle Gourd (Dudhi)",
+    description: "Fresh organic bottle gourd (dudhi), naturally grown and perfect for healthy cooking. Minimum order: 250 gm.",
+    detailedDescription: "Our organic bottle gourd is cultivated using traditional farming methods without any chemical inputs. Known for its high water content and mild flavor, bottle gourd is a versatile vegetable that can be used in various traditional dishes. It's perfect for making curries, soups, and even desserts.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/Bottle Gourd.png",
+    nutritionalInfo: [
+      "High in water content (96%)",
+      "Rich in dietary fiber",
+      "Good source of Vitamin C and B vitamins",
+      "Contains essential minerals like potassium and magnesium"
+    ],
+    benefits: [
+      "Supports hydration and digestion",
+      "Helps in weight management",
+      "Promotes heart health",
+      "May help control blood sugar levels"
     ]
   },
 
@@ -105,6 +105,28 @@ const productsData: Record<string, Product> = {
       "May help control blood sugar levels",
       "Promotes digestive health",
       "Rich in antioxidants that protect cells"
+    ]
+  },
+
+  "turmeric-powder": {
+    id: "turmeric-powder",
+    name: "Powder of Organically Grown Turmeric",
+    description: "Finely ground turmeric powder made from organically grown turmeric. Minimum order: 250 gm.",
+    detailedDescription: "Our organic turmeric powder is made from premium quality organically grown turmeric roots that are carefully dried and ground to preserve all the natural nutrients and curcumin content. This golden spice is a staple in Indian cooking and offers numerous health benefits due to its powerful anti-inflammatory and antioxidant properties.",
+    price: 500,
+    unit: "kg",
+    image: "/lovable-uploads/turmeric_powder.jpg",
+    nutritionalInfo: [
+      "Rich in curcumin (active compound)",
+      "High in antioxidants",
+      "Contains essential vitamins and minerals",
+      "Natural anti-inflammatory properties"
+    ],
+    benefits: [
+      "Powerful anti-inflammatory effects",
+      "Supports immune function",
+      "Aids in reducing inflammation",
+      "Promotes brain health and digestion"
     ]
   }
 };

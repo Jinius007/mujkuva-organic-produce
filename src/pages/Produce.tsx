@@ -28,15 +28,6 @@ const products: Product[] = [
     //image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
     //category: "Grains"
   //},
-   {
-    id: "green-garlic",
-    name: "Green Garlic",
-    description: "Fresh organic green garlic, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
-    price: 120,
-    unit: "kg",
-    image: "/lovable-uploads/green garlic.PNG",
-    category: "Vegetables"
-  },
   {
     id: "fresh-turmeric",
     name: "Fresh Turmeric",
@@ -45,6 +36,15 @@ const products: Product[] = [
     unit: "kg",
     image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
     category: "Spices"
+  },
+  {
+    id: "bottle-gourd",
+    name: "Bottle Gourd (Dudhi)",
+    description: "Fresh organic bottle gourd (dudhi), naturally grown and perfect for healthy cooking. Minimum order: 250 gm.",
+    price: 60,
+    unit: "kg",
+    image: "/lovable-uploads/Bottle Gourd.png",
+    category: "Vegetables"
   },
   //{
     //id: "green-onion",
@@ -72,6 +72,15 @@ const products: Product[] = [
     unit: "kg",
     image: "/lovable-uploads/Brinjal_Bharuchi Variety.PNG",
     category: "Vegetables"
+  },
+  {
+    id: "turmeric-powder",
+    name: "Powder of Organically Grown Turmeric",
+    description: "Finely ground turmeric powder made from organically grown turmeric. Minimum order: 250 gm.",
+    price: 500,
+    unit: "kg",
+    image: "/lovable-uploads/turmeric_powder.jpg",
+    category: "Spices"
   },
  // {
    // id: "methi",
