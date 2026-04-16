@@ -17,98 +17,17 @@ interface Product {
   category: string;
 }
 
-// Updated produce list - Bajra, Fresh Turmeric, and Tomato
+// Products currently sold on site
 const products: Product[] = [
-  //{
-   // id: "bajra",
-    //name: "Bajra (Pearl Millet)",
-    //description: "Fresh organic bajra grains, rich in nutrients and perfect for healthy cooking. Minimum order: 250 gm.",
-    //price: 40,
-    //unit: "kg",
-    //image: "/lovable-uploads/WhatsApp Image 2025-08-28 at 10.57.12 (2).jpeg",
-    //category: "Grains"
-  //},
-  {
-    id: "fresh-turmeric",
-    name: "Fresh Turmeric",
-    description: "Fresh organic turmeric, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 120,
-    unit: "kg",
-    image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
-    category: "Spices"
-  },
-  {
-    id: "bottle-gourd",
-    name: "Bottle Gourd (Dudhi)",
-    description: "Fresh organic bottle gourd (dudhi), naturally grown and perfect for healthy cooking. Minimum order: 250 gm.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/Bottle Gourd.png",
-    category: "Vegetables"
-  },
-  //{
-    //id: "green-onion",
-   // name: "Green Onion/Spring Onion",
-    //description: "Fresh organic green onion (spring onion), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //price: 80,
-    //unit: "kg",
-    //image: "/lovable-uploads/green onion.jpeg",
-    //category: "Vegetables"
-  //},
-  {
-    id: "brinjal_doli",
-    name: "Brinjal (Doli Variety)",
-    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/Brinjal_Doli Variety.PNG",
-    category: "Vegetables"
-  },
-  {
-    id: "brinjal_bharuchi",
-    name: "Brinjal (Bharuchi Variety)",
-    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/Brinjal_Bharuchi Variety.PNG",
-    category: "Vegetables"
-  },
   {
     id: "turmeric-powder",
-    name: "Powder of Organically Grown Turmeric",
-    description: "Finely ground turmeric powder made from organically grown turmeric. Minimum order: 250 gm.",
+    name: "Powder of Organically Grown Haldi",
+    description: "Finely ground turmeric powder (haldi) made from organically grown turmeric. Minimum order: 250 gm.",
     price: 500,
     unit: "kg",
     image: "/lovable-uploads/turmeric_powder.jpg",
     category: "Spices"
-  },
- // {
-   // id: "methi",
-    //name: "Methi",
-    //description: "Fresh organic methi (fenugreek leaves), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //price: 80,
-    //unit: "kg",
-    //image: "/lovable-uploads/methi.PNG",
-    //category: "Vegetables"
-  //},
-  //{
-    //id: "spinach",
-    //name: "Spinach",
-    //description: "Fresh organic spinach, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //price: 60,
-    //unit: "kg",
-    //image: "/lovable-uploads/spinach.PNG",
-    //category: "Vegetables"
-  //},
-  //{
-    //id: "radish",
-    //name: "Radish",
-    //description: "Fresh organic radish, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    //price: 50,
-    //unit: "kg",
-    //image: "/lovable-uploads/radish.PNG",
-    //category: "Vegetables"
-  //}
+  }
 ];
 
 const Produce = () => {

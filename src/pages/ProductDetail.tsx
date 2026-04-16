@@ -20,99 +20,11 @@ interface Product {
 
 // Sample product data (only the products currently sold on site)
 const productsData: Record<string, Product> = {
-  "fresh-turmeric": {
-    id: "fresh-turmeric",
-    name: "Fresh Turmeric",
-    description: "Fresh organic turmeric, naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    detailedDescription: "Our fresh organic turmeric is cultivated using traditional farming methods without any chemical inputs. Known for its powerful anti-inflammatory and antioxidant properties, fresh turmeric is a superfood that provides numerous health benefits. It's perfect for cooking, making golden milk, or adding to your daily wellness routine.",
-    price: 120,
-    unit: "kg",
-    image: "/lovable-uploads/high-quality-fresh-turmeric-healthy-superfood-indonesia-fresh-turmeric-rhizomes-curcuma-longa-indonesia-displayed-405377264.webp",
-    nutritionalInfo: [
-      "Rich in curcumin (active compound)",
-      "High in antioxidants",
-      "Contains essential vitamins and minerals",
-      "Natural anti-inflammatory properties"
-    ],
-    benefits: [
-      "Supports immune function",
-      "Aids in reducing inflammation",
-      "Promotes brain health",
-      "Supports heart health and digestion"
-    ]
-  },
-
-  "bottle-gourd": {
-    id: "bottle-gourd",
-    name: "Bottle Gourd (Dudhi)",
-    description: "Fresh organic bottle gourd (dudhi), naturally grown and perfect for healthy cooking. Minimum order: 250 gm.",
-    detailedDescription: "Our organic bottle gourd is cultivated using traditional farming methods without any chemical inputs. Known for its high water content and mild flavor, bottle gourd is a versatile vegetable that can be used in various traditional dishes. It's perfect for making curries, soups, and even desserts.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/Bottle Gourd.png",
-    nutritionalInfo: [
-      "High in water content (96%)",
-      "Rich in dietary fiber",
-      "Good source of Vitamin C and B vitamins",
-      "Contains essential minerals like potassium and magnesium"
-    ],
-    benefits: [
-      "Supports hydration and digestion",
-      "Helps in weight management",
-      "Promotes heart health",
-      "May help control blood sugar levels"
-    ]
-  },
-
-  "brinjal_doli": {
-    id: "brinjal_doli",
-    name: "Brinjal (Doli Variety)",
-    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    detailedDescription: "Our organic brinjal is cultivated using traditional farming methods without any chemical inputs. Rich in antioxidants and fiber, brinjal is a versatile vegetable that can be used in various traditional and modern dishes. It's known for its unique texture and ability to absorb flavors, making it perfect for curries, stir-fries, and grilled dishes.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/Brinjal_Doli Variety.PNG",
-    nutritionalInfo: [
-      "High in dietary fiber",
-      "Rich in antioxidants (especially nasunin)",
-      "Good source of vitamins B1, B6, and K",
-      "Contains essential minerals like potassium and manganese"
-    ],
-    benefits: [
-      "Supports heart health",
-      "May help control blood sugar levels",
-      "Promotes digestive health",
-      "Rich in antioxidants that protect cells"
-    ]
-  },
-
-  "brinjal_bharuchi": {
-    id: "brinjal_bharuchi",
-    name: "Brinjal (Bharuchi Variety)",
-    description: "Fresh organic brinjal (eggplant), naturally grown and packed with essential nutrients and health benefits. Minimum order: 250 gm.",
-    detailedDescription: "Our organic brinjal is cultivated using traditional farming methods without any chemical inputs. Rich in antioxidants and fiber, brinjal is a versatile vegetable that can be used in various traditional and modern dishes. It's known for its unique texture and ability to absorb flavors, making it perfect for curries, stir-fries, and grilled dishes.",
-    price: 60,
-    unit: "kg",
-    image: "/lovable-uploads/Brinjal_Bharuchi Variety.PNG",
-    nutritionalInfo: [
-      "High in dietary fiber",
-      "Rich in antioxidants (especially nasunin)",
-      "Good source of vitamins B1, B6, and K",
-      "Contains essential minerals like potassium and manganese"
-    ],
-    benefits: [
-      "Supports heart health",
-      "May help control blood sugar levels",
-      "Promotes digestive health",
-      "Rich in antioxidants that protect cells"
-    ]
-  },
-
   "turmeric-powder": {
     id: "turmeric-powder",
-    name: "Powder of Organically Grown Turmeric",
-    description: "Finely ground turmeric powder made from organically grown turmeric. Minimum order: 250 gm.",
-    detailedDescription: "Our organic turmeric powder is made from premium quality organically grown turmeric roots that are carefully dried and ground to preserve all the natural nutrients and curcumin content. This golden spice is a staple in Indian cooking and offers numerous health benefits due to its powerful anti-inflammatory and antioxidant properties.",
+    name: "Powder of Organically Grown Haldi",
+    description: "Finely ground haldi (turmeric) powder made from organically grown turmeric. Minimum order: 250 gm.",
+    detailedDescription: "Our organic haldi powder is made from premium quality organically grown turmeric roots that are carefully dried and ground to preserve the natural nutrients and curcumin content. This golden spice is perfect for daily cooking and wellness routines due to its anti-inflammatory and antioxidant properties.",
     price: 500,
     unit: "kg",
     image: "/lovable-uploads/turmeric_powder.jpg",
